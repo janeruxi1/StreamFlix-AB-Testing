@@ -106,10 +106,10 @@ The project is built in 8 phases, each focused on a specific interview-relevant 
 
 1. ✅ **Phase 0:** Setup & business framing
 2. ✅ **Phase 1a:** Design synthetic dataset (scenario, metrics, simulator)
-3. 🚧 **Phase 1b:** Data quality & sanity checks
-4. ⬜ **Phase 2:** Power analysis & sample size
-5. ⬜ **Phase 3:** Frequentist analysis (z-test, CIs, p-values)
-6. ⬜ **Phase 4:** Bayesian analysis
+3. ✅ **Phase 1b:** Data quality & sanity checks
+4. ✅ **Phase 2:** Power analysis & sample size
+5. ✅ **Phase 3:** Frequentist analysis (z-test, CIs, p-values)
+6. 🚧 **Phase 4:** Bayesian analysis
 7. ⬜ **Phase 5:** Segmentation, CUPED & Simpson's paradox
 8. ⬜ **Phase 6:** Decision memo & visualization
 9. ⬜ **Phase 7:** Production code, tests, CI & final polish
