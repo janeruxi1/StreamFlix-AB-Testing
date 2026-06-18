@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy scipy matplotlib pytest
+
+      - name: Generate synthetic data
+        run: python src/data/simulate.py
+
+      - name: Run test suite
+        run: pytest tests/ -v --tb=short
+
+      - name: Smoke-test analysis notebooks
+        run: |
+          python notebooks/01_data_quality.py > /dev/null
+          python notebooks/02_power_analysis.py > /dev/null
+          python notebooks/03_frequentist.py > /dev/null
+          python notebooks/04_bayesian.py > /dev/null
+          python notebooks/05_segmentation.py > /dev/null
