@@ -39,9 +39,9 @@ This is the canonical product DS question: **a decision under uncertainty, with 
 | Bayesian inference | `notebooks/04_bayesian.py` |
 | Heterogeneous treatment effects & Simpson's paradox | `notebooks/05_segmentation.py` |
 | Variance reduction (CUPED) | `notebooks/05_segmentation.py` |
+| Stakeholder decision memo | `reports/decision_memo.md` |
 | Hero decision-summary figure | `notebooks/06_hero_figure.py`, `reports/figures/06_hero_summary.png` |
 | Interactive Streamlit demo | `app/streamlit_app.py` |
-| Stakeholder decision memo | `reports/decision_memo.md` |
 | Production code quality (tests, CI) | `src/`, `tests/`, `.github/workflows/` |
 
 ---
@@ -177,10 +177,6 @@ The project is structured in 8 phases that mirror a real experimentation workflo
 - **CUPED variance reduction** — uses a pre-experiment covariate to shrink CIs without more users
 - **Simpson's-paradox check** — verifies aggregate effect is not masking segment-level dynamics
 - **Page-load guardrail framed as tradeoff** — quantifies the engineering follow-up rather than blocking the ship decision
-
----
-
-🎮 **[Try the live demo →](https://janeruxi1-ab-testing-project.streamlit.app/)**
 
 ---
 
