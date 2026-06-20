@@ -29,7 +29,3 @@ Thumbs.db
 
 # Streamlit
 .streamlit/secrets.toml
-
-
-# LICENSE
-LICENSE
