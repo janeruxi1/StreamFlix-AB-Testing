@@ -2,7 +2,7 @@
 
 Used both PRE-experiment (design phase: 'how big should we run this?') and
 POST-experiment ('given our sample size, what's the smallest effect we could
-have detected?'). Both questions matter in interviews.
+have detected?'). Both are routine product DS questions.
 
 References
 ----------

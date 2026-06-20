@@ -9,7 +9,7 @@ leadership review. Three panels on one canvas:
   Middle: Forest plot of all primary, sensitivity, and segment effects.
   Bottom: Guardrails snapshot + ship recommendation banner.
 
-Goal: an interviewer or PM should be able to look at this image alone
+Goal: a PM or executive should be able to look at this image alone
 and understand the recommendation in < 30 seconds.
 """
 import sys

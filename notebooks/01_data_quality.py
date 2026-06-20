@@ -11,8 +11,9 @@ Before ANY statistical analysis, we answer 4 questions:
     3. Are users in only one group?      -> duplicate user_id check
     4. Are baseline attributes balanced? -> covariate balance check
 
-If ANY check fails, the experiment cannot be analyzed for ship/no-ship without
-remediation. This is the #1 thing senior product DS interviewers look for.
+If ANY check fails, the experiment cannot be analyzed for ship/no-ship
+without remediation. Verifying data integrity first is the foundation of
+trustworthy experimentation.
 """
 import sys
 from pathlib import Path

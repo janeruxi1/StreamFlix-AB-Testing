@@ -9,7 +9,8 @@ questions:
     C. Could we have detected the lift with fewer users?    (CUPED)
     D. Could the aggregate be hiding a different story?     (Simpson's)
 
-These are the topics that distinguish mid-level from senior product DS.
+These checks turn a single-number headline into a defensible
+recommendation a stakeholder can act on.
 """
 import sys
 from pathlib import Path
