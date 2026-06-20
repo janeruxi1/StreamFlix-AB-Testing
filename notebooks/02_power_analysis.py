@@ -10,8 +10,8 @@ We answer FOUR questions here:
     Q3. What's our sample's actual MDE? (post-hoc)     -> mde_for_n
     Q4. If the true lift is X, can we detect it?       -> power_for_n
 
-The most important interview moment isn't the formula — it's the framing:
-"MDE is a business decision, not a statistical one."
+The most important framing point: MDE is a business decision -- the
+smallest lift worth shipping -- not a statistical one.
 """
 import sys
 from pathlib import Path
@@ -57,7 +57,7 @@ res = sample_size_two_proportion(
 )
 print(res)
 
-print("\n💡 Interview framing:")
+print("\n💡 Framing:")
 print("   - alpha = 5% false-positive tolerance (we'd ship a useless feature")
 print("     1-in-20 tests if we run a lot of them)")
 print("   - power = 80% true-positive tolerance (we'd miss a real +1pp lift")
@@ -94,7 +94,7 @@ print("  MDE (pp)  ->  n per arm")
 for m, n in zip(mdes[::6], ns[::6]):
     print(f"   {m*100:5.2f}      {n:>10,}")
 print("\n💡 Halving the MDE → 4x the sample size. This is why detecting tiny")
-print("   lifts is expensive, and why interviewers love asking about it.")
+print("   lifts is expensive, and why MDE negotiation matters up front.")
 
 
 # ---------------------------------------------------------------------

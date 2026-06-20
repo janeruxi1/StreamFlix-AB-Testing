@@ -6,7 +6,7 @@ Covers the two metric types you'll encounter in 95% of product experiments:
 
 Each test returns effect size, standard error, 95% CI, z/t statistic, and
 a two-sided p-value. CIs are always reported alongside p-values — point
-estimates without uncertainty bounds are an interview anti-signal.
+estimates without uncertainty bounds aren't decision-ready.
 
 Why no scipy dependency in the core:
 We use math.erf for the normal CDF so this module is portable and

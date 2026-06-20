@@ -49,11 +49,12 @@ This is the canonical product DS question: **a decision under uncertainty, with 
 Custom-designed to mirror a real product experiment — **fully reproducible**
 from `src/data/simulate.py` (seed=42). 100,000 rows, 14 columns.
 
-**Why synthetic?** Designing the dataset is itself a signal of experimentation
+**Why synthetic?** Designing the dataset is itself a sign of experimentation
 maturity. The simulator embeds known ground truth, realistic segments, a
 pre-period covariate for CUPED, and engineered data-quality edge cases (SRM bug,
-render glitch) that the analysis must detect. This is a stronger interview
-showcase than reusing a common public dataset.
+render glitch) that the analysis must detect — letting us verify the
+analysis recovers the right answers and demonstrate handling of issues
+that real product experiments routinely surface.
 
 See [`data/README.md`](./data/README.md) for schema and ground-truth details.
 
@@ -147,7 +148,7 @@ Run locally: `pytest tests/`
 
 ## 📚 Learning Roadmap
 
-The project is built in 8 phases, each focused on a specific interview-relevant skill:
+The project is structured in 8 phases that mirror a real experimentation workflow end-to-end:
 
 1. ✅ **Phase 0:** Setup & business framing
 2. ✅ **Phase 1a:** Design synthetic dataset (scenario, metrics, simulator)
@@ -161,20 +162,22 @@ The project is built in 8 phases, each focused on a specific interview-relevant 
 
 ---
 
-## 💼 Talking Points
+## 💼 Key methodological choices
 
-Be ready to articulate:
+- **Synthetic dataset with known ground truth** — control over scenario realism, lets the analysis recover and verify a true treatment effect
+- **Metric framework** — primary, secondary, and guardrail tiers defined before unblinding, by decision-relevance rather than statistical convenience
+- **SRM + covariate balance** — randomization sanity checks before any inference, so we trust the result
+- **MDE negotiated with the PM** — smallest lift worth shipping is a business decision, not a statistical one
+- **Effect size + CI alongside every p-value** — point estimates without uncertainty bounds aren't actionable
+- **Both frequentist and Bayesian inference** — frequentist for the process, Bayesian (P(T>C), credible interval) for stakeholder communication
+- **Pre-registered segment analysis** — protects against post-hoc p-hacking
+- **CUPED variance reduction** — uses a pre-experiment covariate to shrink CIs without more users
+- **Simpson's-paradox check** — verifies aggregate effect is not masking segment-level dynamics
+- **Page-load guardrail framed as tradeoff** — quantifies the engineering follow-up rather than blocking the ship decision
 
-- **Why I built a synthetic dataset** (control over ground truth, scenario realism, demonstrates experiment design — not just analysis)
-- **How I chose primary / secondary / guardrail metrics** (decision-relevance, not statistical convenience)
-- **Why we check SRM before analyzing results** (data integrity → trust in the result)
-- **What MDE means and how I'd choose it** (business-driven, not statistical)
-- **Why p-values aren't enough** (effect size, CIs, practical significance)
-- **When Bayesian beats frequentist for product decisions** (intuitive probability statements like "85% chance treatment is better")
-- **What Simpson's paradox is and how I detect it** (always check segments + check segment composition balance)
-- **How CUPED reduces variance** (use pre-experiment covariate to remove user-level variability)
-- **How I'd communicate a "no ship" result to a PM** (decision memo structure, alternatives, next-test recommendation)
-- **The page-load guardrail tension** (analysis says ship, engineering says wait — how do you frame the tradeoff?)
+---
+
+🎮 **[Try the live demo →](https://janeruxi1-ab-testing-project.streamlit.app/)**
 
 ---
 

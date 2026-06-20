@@ -28,10 +28,7 @@ Two modes:
 
 ## Deploy publicly (Streamlit Community Cloud — free)
 
-1. Push the repo to GitHub (already done).
-2. Go to [share.streamlit.io](https://share.streamlit.io) and connect your GitHub account.
-3. Click "New app", point it at this repo, and set the main file to `app/streamlit_app.py`.
-4. Streamlit gives you a public URL like `https://janeruxi1-ab-testing-project.streamlit.app/`. Drop that into your resume and LinkedIn.
+-  Streamlit public URL  `https://janeruxi1-ab-testing-project.streamlit.app/`.
 
 ## How it stays correct
 
