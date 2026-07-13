@@ -5,7 +5,9 @@
 ![Tests](https://img.shields.io/badge/tests-55%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-> **End-to-end A/B test analysis** for a (fictional) streaming subscription product. Demonstrates the full product data scientist workflow: experiment design, data quality, frequentist & Bayesian analysis, heterogeneous treatment effects, variance reduction (CUPED), and stakeholder communication.
+> **End-to-end A/B test analysis** for a streaming subscription product, built on a synthetic dataset patterned after real product-experiment dynamics. Demonstrates the full product data scientist workflow: experiment design, data quality, frequentist & Bayesian analysis, heterogeneous treatment effects, variance reduction (CUPED), and stakeholder communication.
+
+> 🔗 **Sister project:** [`StreamFlix-churn-retention`](https://github.com/janeruxi1/StreamFlix-churn-retention) — cost-aware churn targeting on the same StreamFlix context. Together the two projects walk through the top-of-funnel and retention halves of a subscription product's decision loop.
 
 ---
 
@@ -115,7 +117,7 @@ python src/data/simulate.py    # regenerates data/experiment.csv
 ```bash
 pip install -r requirements.txt
 python src/data/simulate.py            # generate the dataset
-python notebooks/01_data_quality.py    # start the analysis walkthrough
+python notebooks/01_data_quality.py    # run the analysis notebooks in order
 pytest tests/                          # run the 55 unit tests
 ```
 
@@ -133,6 +135,8 @@ Two modes: **pre-experiment design** (slider-driven sample-size calculator with 
 
 The app imports directly from `src/analysis/`, so the math is the same as the notebooks and protected by the same 55 unit tests.
 
+**Live demo:** [https://janeruxi1-ab-testing-project.streamlit.app/](https://janeruxi1-ab-testing-project.streamlit.app/)
+
 ---
 
 ## 🧪 Testing & CI
@@ -149,7 +153,7 @@ Run locally: `pytest tests/`
 
 ---
 
-## 📚 Learning Roadmap
+## 📚 Roadmap
 
 The project is structured in 8 phases that mirror a real experimentation workflow end-to-end:
 
@@ -177,6 +181,21 @@ The project is structured in 8 phases that mirror a real experimentation workflo
 - **CUPED variance reduction** — uses a pre-experiment covariate to shrink CIs without more users
 - **Simpson's-paradox check** — verifies aggregate effect is not masking segment-level dynamics
 - **Page-load guardrail framed as tradeoff** — quantifies the engineering follow-up rather than blocking the ship decision
+
+---
+
+## 🔗 Related work
+
+This project pairs with [`StreamFlix-churn-retention`](https://github.com/janeruxi1/StreamFlix-churn-retention), which handles the *retention* half of the same product's decision loop:
+
+| | This project | Sister project |
+|---|---|---|
+| **Question** | Which homepage converts trialists to paid? | Which users to save from churn, and how? |
+| **Method** | Randomized experiment | Predictive modeling + cost-aware policy |
+| **Key skills** | A/B testing, power, CUPED, Bayesian | Feature engineering, XGBoost, calibration, SHAP, ROI optimization |
+| **Deliverable** | Ship / don't ship decision | Per-user targeting policy |
+
+Together they cover the two questions every subscription business asks: **who to acquire, and how to keep them.**
 
 ---
 
