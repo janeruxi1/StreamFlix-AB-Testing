@@ -40,3 +40,5 @@ jobs:
           python notebooks/03_frequentist.py > /dev/null
           python notebooks/04_bayesian.py > /dev/null
           python notebooks/05_segmentation.py > /dev/null
+          python notebooks/06_hero_figure.py > /dev/null
+          python notebooks/07_sensitivity_robustness.py > /dev/null

@@ -5,7 +5,11 @@
 ![Tests](https://img.shields.io/badge/tests-55%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-> **End-to-end A/B test analysis** for a (fictional) streaming subscription product. Demonstrates the full product data scientist workflow: experiment design, data quality, frequentist & Bayesian analysis, heterogeneous treatment effects, variance reduction (CUPED), and stakeholder communication.
+> **End-to-end A/B test analysis** for a streaming subscription product, built on a synthetic dataset patterned after real product-experiment dynamics. Demonstrates the full product data scientist workflow: experiment design, data quality, frequentist & Bayesian analysis, heterogeneous treatment effects, variance reduction (CUPED), sensitivity/robustness testing, and stakeholder communication.
+
+**Fastest way in:** [`reports/PROJECT_SUMMARY.md`](./reports/PROJECT_SUMMARY.md) — single-page catalog of what was built + what was found, with every headline number traced to its source notebook. Start there for a 5-minute overview, then dive into [`reports/decision_memo.md`](./reports/decision_memo.md) for the stakeholder recommendation or `notebooks/` for the full analysis.
+
+> 🔗 **Sister project:** [`StreamFlix-Churn-Retention`](https://github.com/janeruxi1/StreamFlix-Churn-Retention) — cost-aware churn targeting on the same StreamFlix context. Together the two projects walk through the top-of-funnel and retention halves of a subscription product's decision loop.
 
 ---
 
@@ -81,7 +85,8 @@ python src/data/simulate.py    # regenerates data/experiment.csv
 │   ├── 03_frequentist.py / .ipynb       # z-test, CIs, Holm-Bonferroni
 │   ├── 04_bayesian.py / .ipynb          # Beta-Binomial posterior, ROPE
 │   ├── 05_segmentation.py / .ipynb      # HTE, CUPED, Simpson's
-│   └── 06_hero_figure.py                # Builds reports/figures/06_hero_summary.png
+│   ├── 06_hero_figure.py                # Builds reports/figures/06_hero_summary.png
+│   └── 07_sensitivity_robustness.py     # Weekly ATE + Pocock + N-subsample + framework check
 ├── src/                             # Reusable, tested modules
 │   ├── data/
 │   │   ├── simulate.py              # Synthetic data generator
@@ -115,7 +120,7 @@ python src/data/simulate.py    # regenerates data/experiment.csv
 ```bash
 pip install -r requirements.txt
 python src/data/simulate.py            # generate the dataset
-python notebooks/01_data_quality.py    # start the analysis walkthrough
+python notebooks/01_data_quality.py    # run the analysis notebooks in order
 pytest tests/                          # run the 55 unit tests
 ```
 
@@ -133,6 +138,8 @@ Two modes: **pre-experiment design** (slider-driven sample-size calculator with 
 
 The app imports directly from `src/analysis/`, so the math is the same as the notebooks and protected by the same 55 unit tests.
 
+**Live demo:** [https://janeruxi1-ab-testing-project.streamlit.app/](https://janeruxi1-ab-testing-project.streamlit.app/)
+
 ---
 
 ## 🧪 Testing & CI
@@ -149,9 +156,9 @@ Run locally: `pytest tests/`
 
 ---
 
-## 📚 Learning Roadmap
+## 📚 Roadmap
 
-The project is structured in 8 phases that mirror a real experimentation workflow end-to-end:
+The project is structured in 9 phases that mirror a real experimentation workflow end-to-end:
 
 1. ✅ **Phase 0:** Setup & business framing
 2. ✅ **Phase 1a:** Design synthetic dataset (scenario, metrics, simulator)
@@ -161,7 +168,8 @@ The project is structured in 8 phases that mirror a real experimentation workflo
 6. ✅ **Phase 4:** Bayesian analysis
 7. ✅ **Phase 5:** Segmentation, CUPED & Simpson's paradox
 8. ✅ **Phase 6:** Decision memo & visualization
-9. ✅ **Phase 7:** Production code, tests, CI & final polish
+9. ✅ **Phase 7:** Sensitivity & robustness — weekly ATE, Pocock sequential-look correction, sample-size subsampling, Bayesian ↔ frequentist reconciliation
+10. ✅ **Phase 8:** Production code, tests, CI & final polish
 
 ---
 
@@ -177,6 +185,21 @@ The project is structured in 8 phases that mirror a real experimentation workflo
 - **CUPED variance reduction** — uses a pre-experiment covariate to shrink CIs without more users
 - **Simpson's-paradox check** — verifies aggregate effect is not masking segment-level dynamics
 - **Page-load guardrail framed as tradeoff** — quantifies the engineering follow-up rather than blocking the ship decision
+
+---
+
+## 🔗 Related work
+
+This project pairs with [`StreamFlix-Churn-Retention`](https://github.com/janeruxi1/StreamFlix-Churn-Retention), which handles the *retention* half of the same product's decision loop:
+
+| | This project | Sister project |
+|---|---|---|
+| **Question** | Which homepage converts trialists to paid? | Which users to save from churn, and how? |
+| **Method** | Randomized experiment | Predictive modeling + cost-aware policy |
+| **Key skills** | A/B testing, power, CUPED, Bayesian | Feature engineering, XGBoost, calibration, SHAP, ROI optimization |
+| **Deliverable** | Ship / don't ship decision | Per-user targeting policy |
+
+Together they cover the two questions every subscription business asks: **who to acquire, and how to keep them.**
 
 ---
 
