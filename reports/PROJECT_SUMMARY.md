@@ -51,7 +51,7 @@ looks, sample-size subsampling, framework choice).
 | Multiple-testing correction | Holm-Bonferroni across 5 metrics — **all survive** |
 | Variance reduction (CUPED) | 2.5% on watch-hours secondary |
 | Segment coverage | **Positive lift in every segment** (device × country × source × tenure) |
-| Sensitivity robustness | **All 4 checks support ship** (see Phase 7 below) |
+| Sensitivity robustness | **All 6 checks support ship** (see Phase 7 below) |
 
 ---
 
@@ -218,9 +218,13 @@ looks, sample-size subsampling, framework choice).
 - Sample-size sensitivity via stratified subsampling (10% / 25% / 50%
   / 75% / 100%)
 - Explicit Bayesian ↔ frequentist reconciliation
+- A/A test — 500 random splits of control-only data validate the
+  pipeline's empirical false-positive rate against nominal α = 5%
+- Bootstrap CI — 10k Bernoulli bootstrap validates the analytical
+  normal-approximation CI
 - Diagnostic charts (`07_weekly_ate.png`, `07_sequential_looks.png`)
 
-### Key findings — all four checks support ship
+### Key findings — all six checks support ship
 
 | Check | Result | Verdict |
 |---|---|---|
@@ -228,11 +232,14 @@ looks, sample-size subsampling, framework choice).
 | **B. Sequential looks (Pocock K=4)** | \|z\| = 5.08 at end of week 1, well above Pocock threshold 2.361 | ✅ Could have stopped early at day 7 |
 | **C. Sample-size sensitivity** | Ship call holds down to **10% subsample** (~10k users) | ✅ Full 100k was not required |
 | **D. Framework reconciliation** | Frequentist p ≈ 0 with +2.54pp; Bayesian P(T>C) = 100% with matching +2.54pp | ✅ Frameworks agree |
+| **E. A/A test** | 500 random splits of control → empirical FPR 3.6%, median p-value 0.496 | ✅ Pipeline validated on known-null data |
+| **F. Bootstrap CI** | 10k Bernoulli bootstrap [+2.03, +3.06]pp vs analytical [+2.02, +3.06]pp — max bound difference 0.004pp | ✅ Normal approximation is safe |
 
 **Reading this for stakeholders:** the +2.54pp headline is robust to
 (i) time-of-experiment novelty effects, (ii) peeking / sequential-look
-inflation, (iii) sample size (would have shipped at N/10), and
-(iv) framework choice. None of these are typical A/B test failure
+inflation, (iii) sample size (would have shipped at N/10),
+(iv) framework choice, (v) pipeline validation on known-null data, and
+(vi) CI-computation method. None of these are typical A/B test failure
 modes — the recommendation is not fragile.
 
 ---

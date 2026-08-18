@@ -5,17 +5,11 @@
 ![Tests](https://img.shields.io/badge/tests-55%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-<<<<<<< HEAD
 > **End-to-end A/B test analysis** for a streaming subscription product, built on a synthetic dataset patterned after real product-experiment dynamics. Demonstrates the full product data scientist workflow: experiment design, data quality, frequentist & Bayesian analysis, heterogeneous treatment effects, variance reduction (CUPED), sensitivity/robustness testing, and stakeholder communication.
 
 **Fastest way in:** [`reports/PROJECT_SUMMARY.md`](./reports/PROJECT_SUMMARY.md) — single-page catalog of what was built + what was found, with every headline number traced to its source notebook. Start there for a 5-minute overview, then dive into [`reports/decision_memo.md`](./reports/decision_memo.md) for the stakeholder recommendation or `notebooks/` for the full analysis.
 
 > 🔗 **Sister project:** [`StreamFlix-Churn-Retention`](https://github.com/janeruxi1/StreamFlix-Churn-Retention) — cost-aware churn targeting on the same StreamFlix context. Together the two projects walk through the top-of-funnel and retention halves of a subscription product's decision loop.
-=======
-> **End-to-end A/B test analysis** for a streaming subscription product, built on a synthetic dataset patterned after real product-experiment dynamics. Demonstrates the full product data scientist workflow: experiment design, data quality, frequentist & Bayesian analysis, heterogeneous treatment effects, variance reduction (CUPED), and stakeholder communication.
-
-> 🔗 **Sister project:** [`StreamFlix-churn-retention`](https://github.com/janeruxi1/StreamFlix-churn-retention) — cost-aware churn targeting on the same StreamFlix context. Together the two projects walk through the top-of-funnel and retention halves of a subscription product's decision loop.
->>>>>>> 686d2c6979a98095760f8ba6a074ba0a606789c4
 
 ---
 
@@ -92,7 +86,7 @@ python src/data/simulate.py    # regenerates data/experiment.csv
 │   ├── 04_bayesian.py / .ipynb          # Beta-Binomial posterior, ROPE
 │   ├── 05_segmentation.py / .ipynb      # HTE, CUPED, Simpson's
 │   ├── 06_hero_figure.py                # Builds reports/figures/06_hero_summary.png
-│   └── 07_sensitivity_robustness.py     # Weekly ATE + Pocock + N-subsample + framework check
+│   └── 07_sensitivity_robustness.py     # 6 checks: weekly ATE, Pocock sequential looks, N-subsample, framework reconciliation, A/A test, bootstrap CI
 ├── src/                             # Reusable, tested modules
 │   ├── data/
 │   │   ├── simulate.py              # Synthetic data generator
@@ -174,7 +168,7 @@ The project is structured in 9 phases that mirror a real experimentation workflo
 6. ✅ **Phase 4:** Bayesian analysis
 7. ✅ **Phase 5:** Segmentation, CUPED & Simpson's paradox
 8. ✅ **Phase 6:** Decision memo & visualization
-9. ✅ **Phase 7:** Sensitivity & robustness — weekly ATE, Pocock sequential-look correction, sample-size subsampling, Bayesian ↔ frequentist reconciliation
+9. ✅ **Phase 7:** Sensitivity & robustness — six checks: weekly ATE (novelty), Pocock sequential-look correction (peeking), sample-size subsampling, Bayesian ↔ frequentist reconciliation, A/A test (pipeline validation on known-null data), bootstrap CI (validates the normal approximation)
 10. ✅ **Phase 8:** Production code, tests, CI & final polish
 
 ---
@@ -196,11 +190,7 @@ The project is structured in 9 phases that mirror a real experimentation workflo
 
 ## 🔗 Related work
 
-<<<<<<< HEAD
 This project pairs with [`StreamFlix-Churn-Retention`](https://github.com/janeruxi1/StreamFlix-Churn-Retention), which handles the *retention* half of the same product's decision loop:
-=======
-This project pairs with [`StreamFlix-churn-retention`](https://github.com/janeruxi1/StreamFlix-churn-retention), which handles the *retention* half of the same product's decision loop:
->>>>>>> 686d2c6979a98095760f8ba6a074ba0a606789c4
 
 | | This project | Sister project |
 |---|---|---|

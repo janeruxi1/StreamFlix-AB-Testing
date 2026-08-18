@@ -116,7 +116,7 @@ A toy demonstration confirmed how aggregate effects can mislead when segments di
 
 ### 4.8 Sensitivity & robustness (Phase 7)
 
-Beyond the direct sensitivity in 4.2 (excl-Android) and the framework diversity in 4.1 (Bayesian re-analysis), Phase 7 stress-tests the ship decision from four additional angles. **All four support the ship recommendation**:
+Beyond the direct sensitivity in 4.2 (excl-Android) and the framework diversity in 4.1 (Bayesian re-analysis), Phase 7 stress-tests the ship decision from **six additional angles**. All six support the ship recommendation:
 
 | Check | Question | Result | Verdict |
 |---|---|---|---|
@@ -124,8 +124,10 @@ Beyond the direct sensitivity in 4.2 (excl-Android) and the framework diversity 
 | **B. Sequential looks (Pocock)** | If the team had peeked mid-experiment, would we have called the winner correctly under a proper α-spending correction? | \|z\| = 5.08 at end of week 1, well above the Pocock K=4 threshold of 2.361 | ✅ Could have stopped at day 7 |
 | **C. Sample-size sensitivity** | At what N does the decision flip? | Ship call holds down to a **10% subsample** (~10,000 users) | ✅ Full 100k was not required |
 | **D. Bayesian ↔ Frequentist reconciliation** | Do both statistical frameworks agree on the ship decision? | Frequentist p ≈ 0 with +2.54pp lift; Bayesian P(T>C) = **100.00%** with matching +2.54pp posterior mean and near-identical 95% intervals | ✅ Frameworks agree |
+| **E. A/A test** | Does the pipeline return "no effect" when there truly isn't one? | 500 random splits of control-only data → empirical false-positive rate **3.6%** (expected ~5%), median p-value 0.496 (uniform-consistent), p-values distributed across bins as expected | ✅ Pipeline validated on known-null data |
+| **F. Bootstrap CI** | Does the analytical normal-approximation CI match a non-parametric bootstrap? | 10k-iteration Bernoulli bootstrap CI [+2.03, +3.06]pp vs analytical [+2.02, +3.06]pp — **max bound difference 0.004pp** | ✅ Normal approximation is safe |
 
-**Read for stakeholders:** the +2.54pp headline is robust to (i) time-of-experiment novelty effects, (ii) peeking / sequential-look inflation, (iii) sample size (would have shipped at N/10), and (iv) framework choice (frequentist and Bayesian give the same answer). None of these are typical A/B-test failure modes.
+**Read for stakeholders:** the +2.54pp headline is robust to (i) time-of-experiment novelty effects, (ii) peeking / sequential-look inflation, (iii) sample size (would have shipped at N/10), (iv) framework choice (frequentist and Bayesian give the same answer), (v) pipeline validation on known-null data, and (vi) CI-computation method. None of these are typical A/B-test failure modes.
 
 See [`notebooks/07_sensitivity_robustness.py`](../notebooks/07_sensitivity_robustness.py) for the full analysis + charts (`reports/figures/07_weekly_ate.png`, `07_sequential_looks.png`).
 
