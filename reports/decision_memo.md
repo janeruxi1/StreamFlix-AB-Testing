@@ -114,14 +114,35 @@ With 5 reported primary/secondary/guardrail metrics, the family-wise false-posit
 
 A toy demonstration confirmed how aggregate effects can mislead when segments differ in baseline rate *and* exposure. **In our actual data, this risk does not materialize**: the covariate-balance check (Phase 1) and segment-level forest plot both confirm that segment composition is balanced enough across arms that the aggregate lift is a trustworthy summary, not an artifact of mix.
 
+### 4.8 Sensitivity & robustness (Phase 7)
+
+Beyond the direct sensitivity in 4.2 (excl-Android) and the framework diversity in 4.1 (Bayesian re-analysis), Phase 7 stress-tests the ship decision from four additional angles. **All four support the ship recommendation**:
+
+| Check | Question | Result | Verdict |
+|---|---|---|---|
+| **A. Weekly ATE** | Is the +2.54pp lift stable, or a novelty spike that would decay? | Lift +2.68 / +2.51 / +3.03 / +1.95 pp across the 4 experiment weeks; pooled +2.54pp | ✅ Stable, no novelty decay |
+| **B. Sequential looks (Pocock)** | If the team had peeked mid-experiment, would we have called the winner correctly under a proper α-spending correction? | \|z\| = 5.08 at end of week 1, well above the Pocock K=4 threshold of 2.361 | ✅ Could have stopped at day 7 |
+| **C. Sample-size sensitivity** | At what N does the decision flip? | Ship call holds down to a **10% subsample** (~10,000 users) | ✅ Full 100k was not required |
+| **D. Bayesian ↔ Frequentist reconciliation** | Do both statistical frameworks agree on the ship decision? | Frequentist p ≈ 0 with +2.54pp lift; Bayesian P(T>C) = **100.00%** with matching +2.54pp posterior mean and near-identical 95% intervals | ✅ Frameworks agree |
+
+**Read for stakeholders:** the +2.54pp headline is robust to (i) time-of-experiment novelty effects, (ii) peeking / sequential-look inflation, (iii) sample size (would have shipped at N/10), and (iv) framework choice (frequentist and Bayesian give the same answer). None of these are typical A/B-test failure modes.
+
+See [`notebooks/07_sensitivity_robustness.py`](../notebooks/07_sensitivity_robustness.py) for the full analysis + charts (`reports/figures/07_weekly_ate.png`, `07_sequential_looks.png`).
+
 ---
 
 ## 5. Guardrails
+
+Full metric coverage — every declared metric, at a glance:
+
+![Forest plot: all effects](./figures/03_forest_plot.png)
 
 | Guardrail | Threshold | Observed | Status |
 |---|---|---|---|
 | Day-7 active rate | No drop > 1pp | +1.75pp | ✅ Pass (improved) |
 | Page load time | No regression > 50ms | **+29.3 ms (+6.87%)** | ⚠️ Threshold met, but real regression |
+
+**Harm-test summary.** Of every declared metric (primary + 2 secondary + 2 guardrails), **only page-load moves against treatment**. All other movements are positive and significant. That's the ideal pattern for a shipping recommendation — one focused concern (page load), no scattered secondary-metric harm elsewhere.
 
 ### Page-load discussion (the tradeoff)
 
