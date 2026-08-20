@@ -1,9 +1,9 @@
 # Project Summary — StreamFlix Personalized Homepage A/B Test
 
-**What was built + what was found.** Single entry-point catalog for
-reviewers, the DS team, and stakeholders. Every number here is
-reproducible from `notebooks/` and verified against the underlying test
-output. All figures live in `reports/figures/`.
+**What was built + what was found.** Single-page catalog of the project's
+components and headline results. Every number here is reproducible from
+`notebooks/` and verified against the underlying test output. All figures
+live in `reports/figures/`.
 
 ---
 
