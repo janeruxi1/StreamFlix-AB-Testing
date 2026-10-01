@@ -1,11 +1,20 @@
 # 🧪 A/B Test Analysis — StreamFlix Trial-to-Paid Experiment
 
-![CI](https://github.com/janeruxi1/ab-testing-project/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/janeruxi1/StreamFlix-AB-Testing/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![Tests](https://img.shields.io/badge/tests-55%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-62%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 > **End-to-end A/B test analysis** for a streaming subscription product, built on a synthetic dataset patterned after real product-experiment dynamics. Demonstrates the full product data scientist workflow: experiment design, data quality, frequentist & Bayesian analysis, heterogeneous treatment effects, variance reduction (CUPED), sensitivity/robustness testing, and stakeholder communication.
+
+## TL;DR
+
+**Question:** should StreamFlix ship a personalized homepage to all trial users?
+**Answer:** **Ship**, conditional on an engineering ticket for a +29ms page-load regression.
+**Evidence:** trial→paid conversion **+2.54pp** (21.26% → 23.80%, 95% CI [+2.02, +3.06]), positive in every segment, robust across six sensitivity checks.
+**Caveats I'd raise in the room:** the SRM test (p = 0.0036) is not a clean pass and is traced to an Android assignment bug; the data are synthetic, so the pipeline is validated against *known* truth (true ATE +2.29pp, covered by the CI) rather than real-world plausibility.
+
+![Decision summary](./reports/figures/06_hero_summary.png)
 
 **Fastest way in:** [`reports/PROJECT_SUMMARY.md`](./reports/PROJECT_SUMMARY.md) — single-page catalog of what was built + what was found, with every headline number traced to its source notebook. Start there for a 5-minute overview, then dive into [`reports/decision_memo.md`](./reports/decision_memo.md) for the stakeholder recommendation or `notebooks/` for the full analysis.
 
@@ -44,6 +53,7 @@ This is the canonical product DS question: **a decision under uncertainty, with 
 | Heterogeneous treatment effects & Simpson's paradox | `notebooks/05_segmentation.py` |
 | Variance reduction (CUPED) | `notebooks/05_segmentation.py` |
 | Stakeholder decision memo | `reports/decision_memo.md` |
+| Ground-truth recovery, CI coverage, formal HTE test, outcome maturity | `notebooks/08_validation_and_heterogeneity.py` |
 | Hero decision-summary figure | `notebooks/06_hero_figure.py`, `reports/figures/06_hero_summary.png` |
 | Interactive Streamlit demo | `app/streamlit_app.py` |
 | Production code quality (tests, CI) | `src/`, `tests/`, `.github/workflows/` |
@@ -73,7 +83,7 @@ python src/data/simulate.py    # regenerates data/experiment.csv
 ## 🗂️ Project Structure
 
 ```
-01-ab-test-analysis/
+StreamFlix-AB-Testing/
 ├── README.md                        # You are here
 ├── LICENSE                          # MIT
 ├── data/
@@ -86,7 +96,8 @@ python src/data/simulate.py    # regenerates data/experiment.csv
 │   ├── 04_bayesian.py / .ipynb          # Beta-Binomial posterior, ROPE
 │   ├── 05_segmentation.py / .ipynb      # HTE, CUPED, Simpson's
 │   ├── 06_hero_figure.py                # Builds reports/figures/06_hero_summary.png
-│   └── 07_sensitivity_robustness.py     # 6 checks: weekly ATE, Pocock sequential looks, N-subsample, framework reconciliation, A/A test, bootstrap CI
+│   ├── 07_sensitivity_robustness.py     # 6 checks: weekly ATE, Pocock sequential looks, N-subsample, framework reconciliation, A/A test, bootstrap CI
+│   └── 08_validation_and_heterogeneity.py  # Ground-truth recovery, CI coverage, maturity, interaction tests, Holm over segments
 ├── src/                             # Reusable, tested modules
 │   ├── data/
 │   │   ├── simulate.py              # Synthetic data generator
@@ -97,12 +108,14 @@ python src/data/simulate.py    # regenerates data/experiment.csv
 │       ├── frequentist.py           # z-test, Welch's, Holm-Bonferroni
 │       ├── bayesian.py              # Beta-Binomial posterior
 │       └── segmentation.py          # Segment lifts & CUPED
-├── tests/                           # 55 pytest unit tests
+├── tests/                           # 62 pytest unit tests
 │   ├── conftest.py
 │   ├── test_power.py
 │   ├── test_frequentist.py
 │   ├── test_bayesian.py
 │   ├── test_segmentation.py
+│   ├── test_sanity_checks.py
+│   ├── test_ground_truth.py         # pipeline recovers planted effects
 │   └── test_simulate.py
 ├── reports/
 │   ├── scenario_brief.md            # PM brief / business framing
@@ -120,8 +133,13 @@ python src/data/simulate.py    # regenerates data/experiment.csv
 ```bash
 pip install -r requirements.txt
 python src/data/simulate.py            # generate the dataset
-python notebooks/01_data_quality.py    # run the analysis notebooks in order
-pytest tests/                          # run the 55 unit tests
+python notebooks/01_data_quality.py    # run the analysis scripts in order (01 ... 08)
+pytest tests/                          # run the 62 unit tests
+```
+
+The `.py` scripts are the source of truth; the `.ipynb` files are generated companions and may lag behind.
+
+```bash
 ```
 
 ---
@@ -136,7 +154,7 @@ streamlit run app/streamlit_app.py
 
 Two modes: **pre-experiment design** (slider-driven sample-size calculator with a sample-size-vs-MDE chart) and **post-experiment analysis** (paste in conversion counts, get frequentist + Bayesian results plus posterior chart). See [`app/README.md`](./app/README.md) for deployment to Streamlit Community Cloud.
 
-The app imports directly from `src/analysis/`, so the math is the same as the notebooks and protected by the same 55 unit tests.
+The app imports directly from `src/analysis/`, so the math is the same as the notebooks and protected by the same unit tests.
 
 **Live demo:** [https://janeruxi1-ab-testing-project.streamlit.app/](https://janeruxi1-ab-testing-project.streamlit.app/)
 
@@ -144,32 +162,26 @@ The app imports directly from `src/analysis/`, so the math is the same as the no
 
 ## 🧪 Testing & CI
 
-The `src/` modules are covered by **55 pytest unit tests** that run on every push via GitHub Actions across Python 3.10, 3.11, and 3.12. Coverage spans:
+The `src/` modules are covered by **62 pytest unit tests** that run on every push via GitHub Actions across Python 3.10, 3.11, and 3.12. Coverage spans:
 
 - Power & sample-size math (textbook value, 1/MDE² scaling, unequal-arm formula)
 - Frequentist tests (z-test, Welch's t, Holm-Bonferroni step-down)
 - Bayesian inference (posterior bracketing, ROPE sums to 1, prior sensitivity)
 - Segmentation & CUPED (variance reduction positive, theta identities)
 - Synthetic data generator (column schema, reproducibility, sane ranges)
+- Ground-truth recovery (CIs cover the simulator's true ATE and device effects) and outcome-maturity / SRM checks
 
 Run locally: `pytest tests/`
 
 ---
 
-## 📚 Roadmap
+## ⚠️ Limitations
 
-The project is structured in 9 phases that mirror a real experimentation workflow end-to-end:
-
-1. ✅ **Phase 0:** Setup & business framing
-2. ✅ **Phase 1a:** Design synthetic dataset (scenario, metrics, simulator)
-3. ✅ **Phase 1b:** Data quality & sanity checks
-4. ✅ **Phase 2:** Power analysis & sample size
-5. ✅ **Phase 3:** Frequentist analysis (z-test, CIs, p-values)
-6. ✅ **Phase 4:** Bayesian analysis
-7. ✅ **Phase 5:** Segmentation, CUPED & Simpson's paradox
-8. ✅ **Phase 6:** Decision memo & visualization
-9. ✅ **Phase 7:** Sensitivity & robustness — six checks: weekly ATE (novelty), Pocock sequential-look correction (peeking), sample-size subsampling, Bayesian ↔ frequentist reconciliation, A/A test (pipeline validation on known-null data), bootstrap CI (validates the normal approximation)
-10. ✅ **Phase 8:** Production code, tests, CI & final polish
+- **Synthetic data.** The effect is planted, so recovery checks validate the pipeline rather than real-world plausibility, and a +12% relative lift is far larger than most real experiments produce.
+- **SRM.** p = 0.0036 is not a clean pass. It is localized to Android and handled with a with/without-Android analysis, but the root cause is a hypothesis, not a finding.
+- **Page-load tradeoff** uses a rough, assumption-based scale check, not a measured conversion-vs-latency relationship.
+- **No revenue / LTV metric.** The decision is on conversion; a dollar-impact estimate (lift × price × retention) is a natural next step.
+- Full list in [`reports/PROJECT_SUMMARY.md`](./reports/PROJECT_SUMMARY.md#limitations-honestly-named).
 
 ---
 
@@ -177,11 +189,13 @@ The project is structured in 9 phases that mirror a real experimentation workflo
 
 - **Synthetic dataset with known ground truth** — control over scenario realism, lets the analysis recover and verify a true treatment effect
 - **Metric framework** — primary, secondary, and guardrail tiers defined before unblinding, by decision-relevance rather than statistical convenience
-- **SRM + covariate balance** — randomization sanity checks before any inference, so we trust the result
+- **SRM + covariate balance** — randomization sanity checks before any inference; a borderline SRM is treated as an incident, not waved through
+- **Outcome maturity** — a 14-day metric is only analyzed after the last cohort's window closes
+- **Ground-truth validation** — the simulator's true effects are compared with the estimates, and CI coverage is checked by simulation
 - **MDE negotiated with the PM** — smallest lift worth shipping is a business decision, not a statistical one
 - **Effect size + CI alongside every p-value** — point estimates without uncertainty bounds aren't actionable
 - **Both frequentist and Bayesian inference** — frequentist for the process, Bayesian (P(T>C), credible interval) for stakeholder communication
-- **Pre-registered segment analysis** — protects against post-hoc p-hacking
+- **Pre-specified segments, formal interaction tests, Holm over all segment tests** — limits post-hoc segment fishing
 - **CUPED variance reduction** — uses a pre-experiment covariate to shrink CIs without more users
 - **Simpson's-paradox check** — verifies aggregate effect is not masking segment-level dynamics
 - **Page-load guardrail framed as tradeoff** — quantifies the engineering follow-up rather than blocking the ship decision

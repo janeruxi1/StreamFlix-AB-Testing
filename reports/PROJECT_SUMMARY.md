@@ -13,7 +13,8 @@ StreamFlix's Growth team hypothesized that replacing the generic
 "Top Picks" homepage with a personalized "Recommended For You" homepage
 would improve trial-to-paid conversion by at least 1pp. A 4-week
 user-level 50/50 randomized experiment was run on ~100,000 new
-trialists in April 2026. This project delivers the full data-science
+trialists in April 2026 (synthetic data with known ground truth; see
+`data/README.md`). This project delivers the full data-science
 workflow — experiment design validation, primary + secondary +
 guardrail inference across two statistical frameworks, heterogeneous
 treatment effects, variance reduction, sensitivity/robustness testing,
@@ -24,8 +25,9 @@ conditional on an engineering ticket to mitigate a +29ms page-load
 regression before broader rollout. Trial conversion improved by
 **+2.54pp** (95% CI [+2.02, +3.06]), with **P(treatment > control) ≈
 100%** under the Bayesian re-analysis. The decision is robust across
-four independent sensitivity dimensions (novelty decay, sequential
-looks, sample-size subsampling, framework choice).
+six sensitivity checks (Phase 7) and the pipeline recovers the planted
+ground truth (true ATE +2.29pp vs estimated +2.54pp, inside the CI;
+Phase 8).
 
 ---
 
@@ -52,6 +54,7 @@ looks, sample-size subsampling, framework choice).
 | Variance reduction (CUPED) | 2.5% on watch-hours secondary |
 | Segment coverage | **Positive lift in every segment** (device × country × source × tenure) |
 | Sensitivity robustness | **All 6 checks support ship** (see Phase 7 below) |
+| Ground-truth recovery | True ATE +2.29pp; estimate +2.54pp [2.02, 3.06] covers it; 300-rep CI coverage 95.3% (Phase 8) |
 
 ---
 
@@ -68,9 +71,10 @@ looks, sample-size subsampling, framework choice).
 
 ### Key findings
 
-- SRM chi-square **p = 0.0036** — passes the strict 0.001 threshold but
-  sits in the amber band (would fail at α = 0.005). Not sufficient
-  grounds to discard the experiment.
+- SRM chi-square **p = 0.0036** — clears a strict 0.001 alert threshold
+  but is **not a clean pass** (it fails at the more common 0.01). Treated
+  as a data-quality incident: localized to Android, analysis re-run with
+  and without it, root-causing is a pre-rollout action.
 - **Covariate balance revealed an Android-share imbalance of −1.08pp**
   in treatment. Consistent with a segment-specific assignment bug.
   Localizing the failure mode enabled a targeted sensitivity analysis
@@ -154,7 +158,7 @@ looks, sample-size subsampling, framework choice).
 
 ### What was built
 
-- Within-segment two-proportion z-tests across 4 pre-registered
+- Within-segment two-proportion z-tests across 4 pre-specified
   dimensions: device (4 levels), country (5), source (4),
   new-vs-returning (2)
 - Segment forest plot with 95% CIs (`05_segment_forest.png`)
@@ -166,19 +170,20 @@ looks, sample-size subsampling, framework choice).
 
 - **Positive lift in every segment examined.** Mobile (iOS +3.24pp,
   Android +2.96pp) leads; TV +0.42pp is directionally positive but
-  underpowered at the segment level. Returning users +3.29pp beats new
-  users +2.26pp — consistent with the mechanism (personalization has
-  more signal to work with when users have prior behavior).
+  underpowered at the segment level. A formal interaction test (Phase 8)
+  supports heterogeneity by device (p≈0.01) but not by country, source or
+  tenure; returning users' larger pp lift reflects their higher baseline
+  (their relative lift is lower than new users').
 - **CUPED variance reduction: 2.5%** on watch-hours. Modest because
   prior_watch_hours barely correlates with trial outcomes (ρ ≈ 0.16 —
   most trialists are literally new users with no prior history). The
   framework is now in place for future experiments on returning-user
   cohorts where ρ ≈ 0.5-0.7 and CUPED typically delivers 20-50% CI
   reduction.
-- **Simpson's paradox is not a live risk in this experiment.** Covariate
-  balance (Phase 1) + segment forest confirm that treatment/control
-  mix is balanced enough within-segments that the aggregate lift is not
-  a composition artifact.
+- **No sign of Simpson's paradox here.** The lift is positive within
+  every segment and arms are balanced on covariates (bar the Android
+  gap), so the aggregate is not a composition artifact. This is a check
+  on this experiment, not a general guarantee.
 
 ---
 
@@ -198,10 +203,10 @@ looks, sample-size subsampling, framework choice).
   ticket to mitigate the +29ms page-load regression before broader
   rollout
 - **Page-load discussion:** +29ms is real (tight CI, not noise) but
-  sits below the ~100ms perceptibility threshold. Extrapolating from
-  published latency studies (Amazon, Google), the implied conversion
-  drag is ~0.3% — roughly **40× smaller** than the +12% conversion
-  gain. Ship, disclose, mitigate.
+  sits below the ~100ms perceptibility threshold. A pessimistic
+  back-of-envelope (1% relative conversion loss per 100ms, borrowed from
+  retail/search studies, so an assumption rather than a measurement)
+  implies ~0.3% drag against a +12% gain. Ship, disclose, mitigate.
 - **Harm-test summary:** of all 5 declared metrics, only page-load
   moves against treatment. Every other metric is positive and
   significant. Ideal pattern for a shipping recommendation — one
@@ -229,7 +234,7 @@ looks, sample-size subsampling, framework choice).
 | Check | Result | Verdict |
 |---|---|---|
 | **A. Weekly ATE** | Lift +2.68 / +2.51 / +3.03 / +1.95pp across weeks 1-4; pooled +2.54pp | ✅ Stable, no novelty decay |
-| **B. Sequential looks (Pocock K=4)** | \|z\| = 5.08 at end of week 1, well above Pocock threshold 2.361 | ✅ Could have stopped early at day 7 |
+| **B. Sequential looks (Pocock K=4)** | \|z\| = 5.08 at end of week 1, well above Pocock threshold 2.361 | ✅ An early look would not have changed the call (illustrative; design was fixed-horizon) |
 | **C. Sample-size sensitivity** | Ship call holds down to **10% subsample** (~10k users) | ✅ Full 100k was not required |
 | **D. Framework reconciliation** | Frequentist p ≈ 0 with +2.54pp; Bayesian P(T>C) = 100% with matching +2.54pp | ✅ Frameworks agree |
 | **E. A/A test** | 500 random splits of control → empirical FPR 3.6%, median p-value 0.496 | ✅ Pipeline validated on known-null data |
@@ -244,15 +249,39 @@ modes — the recommendation is not fragile.
 
 ---
 
+## Phase 8 — Ground-truth validation & formal heterogeneity
+
+### What was built
+
+- Exact ground truth from the simulator (`compute_ground_truth()`):
+  counterfactual p(Y=1|control) and p(Y=1|treatment) per user
+- Recovery table for the ATE and device / tenure effects, plus a
+  300-replication CI-coverage study
+- Outcome-maturity check for the 14-day conversion window
+- Likelihood-ratio tests of treatment × segment interactions
+- Holm correction across all 15 segment tests
+- Skew-robust checks (bootstrap, log, Mann-Whitney) on watch hours
+
+### Key findings
+
+- True ATE **+2.29pp**; estimate +2.54pp [+2.02, +3.06] covers it, as do
+  all device and tenure CIs. Empirical coverage 95.3% over 300 sims.
+- Only the device interaction is significant (p≈0.01).
+- 13 of 15 segment tests survive Holm (not TV; not CA).
+- A readout dated before 2026-05-12 would have censored ≤18% of users.
+
+---
+
 ## Key design decisions + rationale
 
 **Why intent-to-treat (ITT) as the primary estimator.**
-ITT analyzes users by assigned arm regardless of what treatment they
-actually received. It's the industry-default estimator because it
-captures the real-world effect of *deciding* to ship. It biases toward
-null when there's leakage (like the Android assignment bug), so a
-positive ITT result is a conservative estimate of the true effect —
-which strengthens rather than weakens the ship recommendation.
+ITT analyzes users by the arm recorded at assignment regardless of what
+they saw. It captures the real-world effect of *deciding* to ship, and
+contamination such as the 0.1% wrong-page glitch (113 users) biases it
+toward zero, so it is slightly conservative. The Android bug is a
+different problem: it changes arm *sizes* (SRM) but, as simulated, is
+random within Android and does not bias the ATE — which is why we also
+report the analysis excluding Android rather than assume so.
 
 **Why Welch's t-test over Student's for the continuous secondaries.**
 Student's assumes equal variances between arms. Product experiments
@@ -275,8 +304,8 @@ Running both surfaces framework-robustness (Phase 7 Section D confirms
 both agree here) and produces both compliance-ready and
 stakeholder-ready outputs.
 
-**Why 4 pre-registered segments and not more.**
-Pre-registering segments before unblinding is the key discipline that
+**Why 4 pre-specified segments and not more.**
+Specifying segments before looking at outcomes is the key discipline that
 distinguishes principled heterogeneous-effect analysis from
 post-hoc segment fishing. The 4 chosen (device, country, source,
 tenure) reflect legitimate business priors about which segments are
@@ -284,7 +313,7 @@ most likely to respond differently to personalization. Adding more
 segments after unblinding would inflate family-wise error and open
 the door to false-positive segment claims.
 
-**Why the 24-day experiment ran for 4 weeks (not shorter).**
+**Why the experiment ran for 4 weeks (not shorter).**
 The aggregate metric needed ~24k users per arm at the 1pp MDE. But
 the SEGMENT analyses need power *within* segments — TV at ~5k per arm
 is already borderline. Powering only for the aggregate would have
@@ -321,6 +350,12 @@ shape for a mature ship recommendation.
   is positive (+0.42pp) but not significant. Not evidence of "no
   effect on TV" — evidence of "insufficient N to conclude on TV."
   Natural target for a TV-specific follow-up experiment.
+- **Synthetic data.** Every result is on simulated data whose truth is
+  known by construction, so recovery checks are somewhat circular and the
+  +12% relative lift is far larger than most real experiments produce.
+  Phase 8 validates the *pipeline*, not the real-world plausibility.
+- **Outcome maturity.** Conversion is a 14-day outcome; the last signup
+  cohort matured on 2026-05-12, so the readout must be dated after that.
 - **Novelty monitoring window.** 4-week run captures 2 full trial
   cycles, but a longer post-ship monitoring window (+30d, +60d)
   is prudent for a personalization feature. Rollout plan explicitly
@@ -350,10 +385,11 @@ prioritized follow-up experiment queue.
 | Segmentation, CUPED, Simpson's demo | `notebooks/05_segmentation.py` |
 | Hero figure regeneration | `notebooks/06_hero_figure.py` |
 | Sensitivity & robustness (Phase 7) | `notebooks/07_sensitivity_robustness.py` |
+| Ground-truth recovery, HTE tests, maturity (Phase 8) | `notebooks/08_validation_and_heterogeneity.py` |
 | All charts | `reports/figures/` |
 | Reusable inference primitives | `src/analysis/` (frequentist, bayesian, power, sanity_checks, segmentation) |
 | Data loader + simulator | `src/data/` |
-| Tests | `tests/` — 55 pytest, GitHub Actions CI |
+| Tests | `tests/` — 62 pytest, GitHub Actions CI |
 
 ---
 
