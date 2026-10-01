@@ -8,7 +8,7 @@
 
 ## Background
 
-Our 14-day free trial converts at **~18%** to paid. The growth team believes our current "Top Picks" homepage (generic editorial picks) is missing an opportunity to hook trialists with personalized content.
+Our 14-day free trial converts at **~18%** to paid (historical planning figure). The growth team believes our current "Top Picks" homepage (generic editorial picks) is missing an opportunity to hook trialists with personalized content.
 
 ## Proposal
 

@@ -50,10 +50,30 @@ This writes `data/experiment.csv` (~100,000 rows). The generator is seeded
 
 The simulator embeds the following truths that the analysis phases should recover:
 
-- **Overall ATE on conversion:** ~+1–2pp lift (treatment > control)
-- **Heterogeneous treatment effect:** ~+2pp for mobile (iOS/Android), ~+0.5pp Web, ~0pp TV
-- **Returning users** respond more strongly than new users
-- **SRM bug:** Android v<5.1 users intermittently leak from treatment → control
+Effects are specified on the log-odds scale, so the true effect in percentage
+points depends on each user's baseline. `compute_ground_truth()` in
+`src/data/simulate.py` returns the exact values (mean of p(Y=1|treatment) −
+p(Y=1|control) over users). For the shipped dataset (seed 42):
+
+- **Overall ATE on conversion:** **+2.29pp** (control rate ≈ 21%)
+- **Heterogeneous treatment effect (true, pp):** iOS +2.96, Android +2.93,
+  Web +1.24, TV +0.57; returning +3.46, new +1.90. The returning-user *log-odds*
+  bump is tiny (+0.04), so the larger pp lift mostly reflects higher baseline
+- **No planted interaction** with country or source (differences there are noise)
+- **SRM bug:** ~3% of Android users are candidates; 70% of the treatment-assigned
+  ones are re-labelled to control (there is no app-version column)
 - **Render glitch:** ~0.1% of users see the wrong page vs. their assignment
 - **Page load guardrail:** treatment is ~30ms slower (legitimate engineering concern)
-- **`prior_watch_hours`** is a strong covariate → enables ~15–30% variance reduction via CUPED
+- **`prior_watch_hours`** enters the conversion logit (+0.03/hr) but correlates
+  only ~0.16 with the watch-hours outcome, so CUPED gives a ~2.5% variance
+  reduction here, not the 15–30% the covariate might suggest
+
+`notebooks/08_validation_and_heterogeneity.py` checks that the analysis recovers
+these. Note the data are synthetic: recovery validates the pipeline, not
+real-world plausibility.
+
+## Outcome window
+
+`converted` is a 14-day outcome. Signups run 2026-04-01 → 2026-04-28, so the last
+cohort's window closes on 2026-05-12; analysis must be run after that date
+(`outcome_maturity()` in `src/analysis/sanity_checks.py`).
