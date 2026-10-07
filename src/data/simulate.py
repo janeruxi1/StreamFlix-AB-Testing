@@ -16,11 +16,19 @@ What makes this realistic:
   - Hidden subgroup heterogeneity -> Simpson's paradox possible if segments
     have different baseline conversion AND treatment exposure ratio
 
-GROUND TRUTH (set in code below):
-  - Overall treatment effect on conversion: +1.2 percentage points
-  - Effect is HIGHER for mobile users (+2pp) than desktop (+0.5pp)
+GROUND TRUTH
+  The treatment effect is specified on the log-odds scale (see section 7), so
+  the true effect in percentage points depends on each user's baseline and is
+  not a single input. Use `compute_ground_truth()` (or
+  `simulate_experiment(return_truth=True)`) to get the exact true ATE and the
+  true per-segment effects, computed from each user's counterfactual
+  probabilities p(Y=1 | control) and p(Y=1 | treatment).
+
+  Qualitatively:
+  - Effect is HIGHER for mobile (iOS/Android) than Web, and ~0 for TV
   - Effect is HIGHER for returning users than brand-new users
-  - SRM is injected in ~0.3% of users (assignment bug on Android <v5.1)
+  - ~1.5% of Android users (3% x 70% x ~50% treated) are re-labelled from
+    treatment to control by a simulated assignment bug -> SRM
 """
 from __future__ import annotations
 
@@ -38,8 +46,10 @@ import pandas as pd
 class SimConfig:
     n_users: int = 100_000           # total trial signups in test window
     seed: int = 42
-    base_conversion: float = 0.18    # baseline trial->paid rate
-    true_lift_pp: float = 0.012      # +1.2 percentage points (overall ATE)
+    # Intercept of the conversion logit for a reference user. The realised
+    # control rate is higher (~21%) because returning users and prior watch
+    # hours add to the logit.
+    base_conversion: float = 0.18
 
     # Segment shares (must sum to 1 within each dimension)
     country_share: dict = None
@@ -56,8 +66,16 @@ class SimConfig:
                             "paid_social": 0.20, "referral": 0.15})
 
 
-def simulate_experiment(cfg: SimConfig = SimConfig()) -> pd.DataFrame:
-    """Generate a realistic A/B experiment dataset with known ground truth."""
+def simulate_experiment(cfg: SimConfig = SimConfig(), return_truth: bool = False):
+    """Generate a realistic A/B experiment dataset with known ground truth.
+
+    Parameters
+    ----------
+    return_truth : if True, return ``(df, truth)`` where ``truth`` is a frame
+        row-aligned with ``df`` holding each user's counterfactual conversion
+        probabilities ``p0`` (control) and ``p1`` (treatment). The random
+        stream is unchanged, so ``df`` is identical either way.
+    """
     rng = np.random.default_rng(cfg.seed)
     n = cfg.n_users
 
@@ -117,7 +135,7 @@ def simulate_experiment(cfg: SimConfig = SimConfig()) -> pd.DataFrame:
     )
 
     # ---- 7. Heterogeneous treatment effect (HTE) ----
-    # Overall ATE: +1.2pp. But effect varies by segment.
+    # Effect varies by segment (log-odds scale).
     # Mobile (iOS/Android) sees larger lift; TV almost no effect.
     treat_effect_logodds = np.where(
         np.isin(device, ["iOS", "Android"]),
@@ -130,6 +148,9 @@ def simulate_experiment(cfg: SimConfig = SimConfig()) -> pd.DataFrame:
     treat_indicator = (group == "treatment").astype(float)
     final_logit = user_logit + treat_effect_logodds * treat_indicator
     prob_convert = 1 / (1 + np.exp(-final_logit))
+    # Counterfactual probabilities (no randomness) -> exact ground truth
+    p0 = 1 / (1 + np.exp(-user_logit))
+    p1 = 1 / (1 + np.exp(-(user_logit + treat_effect_logodds)))
     converted = rng.binomial(1, prob_convert).astype(int)
 
     # ---- 8. Secondary metrics ----
@@ -184,13 +205,38 @@ def simulate_experiment(cfg: SimConfig = SimConfig()) -> pd.DataFrame:
         "distinct_titles": distinct_titles,
         "day7_active": day7_active,
         "page_load_ms": page_load_ms,
+        "_p0": p0,
+        "_p1": p1,
     })
 
-    return df.sort_values("timestamp").reset_index(drop=True)
+    df = df.sort_values("timestamp").reset_index(drop=True)
+    truth = df[["_p0", "_p1"]].rename(columns={"_p0": "p0", "_p1": "p1"})
+    df = df.drop(columns=["_p0", "_p1"])
+    return (df, truth) if return_truth else df
+
+
+def compute_ground_truth(cfg: SimConfig = SimConfig()) -> dict:
+    """True effects implied by the simulator, in percentage-point units.
+
+    Returns a dict with the overall ATE and per-segment true effects for
+    device and is_returning, i.e. the quantities the analysis should recover.
+    The ATE is the mean of p1 - p0 over all users (the effect of actually
+    receiving the personalized homepage).
+    """
+    df, truth = simulate_experiment(cfg, return_truth=True)
+    lift = truth["p1"] - truth["p0"]
+    out = {
+        "ate": float(lift.mean()),
+        "control_rate": float(truth["p0"].mean()),
+        "by_device": lift.groupby(df["device"]).mean().to_dict(),
+        "by_is_returning": lift.groupby(df["is_returning"]).mean().to_dict(),
+    }
+    return out
 
 
 def main(out_path: str | Path = "data/experiment.csv") -> None:
-    df = simulate_experiment()
+    cfg = SimConfig()
+    df = simulate_experiment(cfg)
     out = Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out, index=False)
@@ -200,7 +246,8 @@ def main(out_path: str | Path = "data/experiment.csv") -> None:
     print(f"\nGroup counts:\n{df['group'].value_counts()}")
     print(f"\nObserved conversion by group:")
     print(df.groupby("group")["converted"].agg(["mean", "count"]))
-    print(f"\nTrue overall lift target was: +1.2pp")
+    truth = compute_ground_truth(cfg)
+    print(f"\nTrue ATE implied by the simulator: {truth['ate'] * 100:+.2f}pp")
 
 
 if __name__ == "__main__":

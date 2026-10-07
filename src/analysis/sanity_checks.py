@@ -69,3 +69,31 @@ def check_srm(
         p_value=float(p_value),
         passed=p_value > alpha,
     )
+
+
+def outcome_maturity(
+    df: pd.DataFrame,
+    analysis_date: str | pd.Timestamp,
+    window_days: int = 14,
+    time_col: str = "timestamp",
+) -> dict:
+    """Share of users whose outcome window had fully closed at `analysis_date`.
+
+    A 14-day conversion metric is only final for users who signed up at least
+    14 days before the data pull. Analysing earlier censors the latest
+    cohorts (they have had less time to convert), which biases conversion
+    down for both arms and can distort weekly trends.
+
+    Returns the matured share, the last fully-matured signup time, and the
+    date on which every user's window would have closed.
+    """
+    analysis_date = pd.Timestamp(analysis_date)
+    window = pd.Timedelta(days=window_days)
+    ts = pd.to_datetime(df[time_col])
+    matured = (ts + window) <= analysis_date
+    return {
+        "matured_share": float(matured.mean()),
+        "last_matured_signup": analysis_date - window,
+        "all_matured_on": ts.max() + window,
+        "n_immature": int((~matured).sum()),
+    }
