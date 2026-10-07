@@ -1,19 +1,20 @@
-# Core scientific stack
-pandas>=2.0
-numpy>=1.24
-scipy>=1.11
+# Core scientific stack (major-version caps keep the analysis reproducible)
+pandas>=2.0,<4
+numpy>=1.24,<3
+scipy>=1.11,<2
 
-# Statistics & ML (light)
-statsmodels>=0.14
+# Statistics
+statsmodels>=0.14,<1
 
 # Visualization
-matplotlib>=3.7
-seaborn>=0.12
-plotly>=5.17
+matplotlib>=3.7,<4
+seaborn>=0.12,<1
+plotly>=5.17,<7
 
 # Notebook / app
-jupyterlab>=4.0
-streamlit>=1.28
+jupyterlab>=4.0,<5
+streamlit>=1.28,<2
 
 # Testing
-pytest>=7.4
+pytest>=7.4,<10
+pytest-cov>=4.1,<8

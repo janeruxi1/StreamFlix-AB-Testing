@@ -25,13 +25,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas numpy scipy matplotlib pytest
+          pip install -r requirements.txt
 
       - name: Generate synthetic data
         run: python src/data/simulate.py
 
       - name: Run test suite
-        run: pytest tests/ -v --tb=short
+        run: pytest tests/ -v --tb=short --cov=src --cov-report=term-missing
 
       - name: Smoke-test analysis notebooks
         run: |
@@ -42,3 +42,4 @@ jobs:
           python notebooks/05_segmentation.py > /dev/null
           python notebooks/06_hero_figure.py > /dev/null
           python notebooks/07_sensitivity_robustness.py > /dev/null
+          python notebooks/08_validation_and_heterogeneity.py > /dev/null

@@ -32,4 +32,4 @@ Two modes:
 
 ## How it stays correct
 
-The app imports directly from `src/analysis/` — the same code path the analysis notebooks and the 55 pytest unit tests use. If the test suite is green in CI, the demo is mathematically correct.
+The app imports directly from `src/analysis/` — the same code path the analysis notebooks and the 62 pytest unit tests use. If the test suite is green in CI, the demo is mathematically correct.
