@@ -18,7 +18,7 @@
 
 **Fastest way in:** [`reports/PROJECT_SUMMARY.md`](./reports/PROJECT_SUMMARY.md) — single-page catalog of what was built + what was found, with every headline number traced to its source notebook. Start there for a 5-minute overview, then dive into [`reports/decision_memo.md`](./reports/decision_memo.md) for the stakeholder recommendation or `notebooks/` for the full analysis.
 
-> 🔗 **Sister project:** [`StreamFlix-Churn-Retention`](https://github.com/janeruxi1/StreamFlix-Churn-Retention) — cost-aware churn targeting on the same StreamFlix context. Together the two projects walk through the top-of-funnel and retention halves of a subscription product's decision loop.
+> 🔗 **Sister projects:** [`StreamFlix-Churn-Retention`](https://github.com/janeruxi1/StreamFlix-Churn-Retention) — cost-aware churn targeting — and [`StreamFlix-RAG-evaluation`](https://github.com/janeruxi1/StreamFlix-RAG-evaluation) — an evaluation harness for an AI support assistant — on the same StreamFlix context. The first two walk through the top-of-funnel and retention halves of a subscription product's decision loop; the third asks whether a support assistant is safe to deploy.
 
 ---
 
@@ -139,9 +139,6 @@ pytest tests/                          # run the 62 unit tests
 
 The `.py` scripts are the source of truth; the `.ipynb` files are generated companions and may lag behind.
 
-```bash
-```
-
 ---
 
 ## 🎮 Interactive demo (Streamlit)
@@ -210,10 +207,12 @@ This project pairs with [`StreamFlix-Churn-Retention`](https://github.com/janeru
 |---|---|---|
 | **Question** | Which homepage converts trialists to paid? | Which users to save from churn, and how? |
 | **Method** | Randomized experiment | Predictive modeling + cost-aware policy |
-| **Key skills** | A/B testing, power, CUPED, Bayesian | Feature engineering, XGBoost, calibration, SHAP, ROI optimization |
+| **Key skills** | A/B testing, power, CUPED, Bayesian | Feature engineering, gradient boosting, calibration, SHAP, uplift modeling, ROI optimization |
 | **Deliverable** | Ship / don't ship decision | Per-user targeting policy |
 
 Together they cover the two questions every subscription business asks: **who to acquire, and how to keep them.**
+
+A third project in the same StreamFlix universe, [`StreamFlix-RAG-evaluation`](https://github.com/janeruxi1/StreamFlix-RAG-evaluation), takes on a different question: **is an AI support assistant safe to put in front of customers, and how would we know?** It evaluates a retrieval-augmented assistant with a hand-labelled test set, a validated LLM judge, and a deployment memo whose numbers are checked in CI.
 
 ---
 

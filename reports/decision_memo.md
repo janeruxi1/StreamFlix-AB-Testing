@@ -3,7 +3,7 @@
 **To:** Sarah Chen (PM, Growth) · web platform · recommendations team
 **From:** Xi Ru (Data Science)
 **Date:** 2026-05-15 (after the last signup cohort's 14-day window closed on 2026-05-12)
-**Status:** Final v1.0
+**Status:** Final v1.1
 
 ![Decision Summary](./figures/06_hero_summary.png)
 
