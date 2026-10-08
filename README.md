@@ -5,7 +5,7 @@
 ![Tests](https://img.shields.io/badge/tests-62%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-> **End-to-end A/B test analysis** for a streaming subscription product, built on a synthetic dataset patterned after real product-experiment dynamics. Demonstrates the full product data scientist workflow: experiment design, data quality, frequentist & Bayesian analysis, heterogeneous treatment effects, variance reduction (CUPED), sensitivity/robustness testing, and stakeholder communication.
+> **End-to-end A/B test analysis** for a streaming subscription product, built on a synthetic dataset patterned after real product-experiment dynamics. Demonstrates the full experimentation workflow: experiment design, data quality, frequentist & Bayesian analysis, heterogeneous treatment effects, variance reduction (CUPED), sensitivity/robustness testing, and stakeholder communication.
 
 ## TL;DR
 
