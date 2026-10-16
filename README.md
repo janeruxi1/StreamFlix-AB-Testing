@@ -95,9 +95,9 @@ StreamFlix-AB-Testing/
 │   ├── 03_frequentist.py / .ipynb       # z-test, CIs, Holm-Bonferroni
 │   ├── 04_bayesian.py / .ipynb          # Beta-Binomial posterior, ROPE
 │   ├── 05_segmentation.py / .ipynb      # HTE, CUPED, Simpson's
-│   ├── 06_hero_figure.py                # Builds reports/figures/06_hero_summary.png
-│   ├── 07_sensitivity_robustness.py     # 6 checks: weekly ATE, Pocock sequential looks, N-subsample, framework reconciliation, A/A test, bootstrap CI
-│   └── 08_validation_and_heterogeneity.py  # Ground-truth recovery, CI coverage, maturity, interaction tests, Holm over segments
+│   ├── 06_hero_figure.py / .ipynb       # Builds reports/figures/06_hero_summary.png
+│   ├── 07_sensitivity_robustness.py / .ipynb  # 6 checks: weekly ATE, Pocock sequential looks, N-subsample, framework reconciliation, A/A test, bootstrap CI
+│   └── 08_validation_and_heterogeneity.py / .ipynb  # Ground-truth recovery, CI coverage, maturity, interaction tests, Holm over segments
 ├── src/                             # Reusable, tested modules
 │   ├── data/
 │   │   ├── simulate.py              # Synthetic data generator
