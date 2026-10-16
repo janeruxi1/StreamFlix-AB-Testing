@@ -10,8 +10,8 @@ We answer the headline question — 'should we ship?' — using:
   E. Multiple-testing correction (Holm-Bonferroni)
   F. Forest plot summarizing all effects
 
-Senior framing: 'I don't pick a metric to "win" — I report all of them with
-CIs, apply multiple-test correction, and tell the PM the full picture.'
+Every declared metric is reported with its CI and a multiple-testing
+correction, not just the one that wins.
 """
 import sys
 from pathlib import Path
@@ -194,11 +194,12 @@ for i, (e, l, h, sig, kind) in enumerate(zip(rel, lo, hi, sigs, kinds)):
                 fmt="o", color=colors[kind], markersize=10,
                 ecolor=colors[kind], elinewidth=2.5, capsize=5,
                 markeredgecolor="white", markeredgewidth=1.5)
-    suffix = "✅" if sig else "ns"
+    suffix = "sig" if sig else "ns"
     ax.text((h * 100) + 0.5, yi, f"  {e*100:+.2f}% [{l*100:+.2f}, {h*100:+.2f}]  {suffix}",
             va="center", fontsize=9)
 
 ax.axvline(0, color="gray", linewidth=1)
+ax.set_xlim(-1, max(hi) * 100 + 9)  # room for the labels
 ax.set_yticks(y); ax.set_yticklabels(labels)
 ax.set_xlabel("Relative effect (%) — 95% CI")
 ax.set_title("Forest Plot — All Frequentist Results",

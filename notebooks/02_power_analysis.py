@@ -75,7 +75,7 @@ print("=" * 70)
 days = runtime_days(res.n_total, DAILY_TRAFFIC)
 print(f"  At {DAILY_TRAFFIC:,} new trialists/day, total {res.n_total:,} users")
 print(f"  --> runtime ≈ {days:.1f} days")
-print("\n💡 Real-world adjustments senior DS would call out:")
+print("\n💡 Real-world adjustments:")
 print("   - Pad +1 full week-cycle to absorb weekday/weekend seasonality")
 print("   - Account for novelty effects (decay over the first ~7 days)")
 print("   - 4-week run was chosen for those reasons, not because of math")
@@ -223,7 +223,7 @@ The experiment is well-powered for the headline metric.
   - Post-hoc MDE:                  {mde_actual*100:.2f}pp absolute
                                    ({mde_actual/BASELINE_RATE:.2%} relative)
 
-Any observed lift above {mde_actual*100:.2f}pp will be statistically credible.
-A null result would represent a genuine absence of effect, not insufficient
-sample size. Proceeding to inference (Phase 3).
+A true lift of {mde_actual*100:.2f}pp or more would be detected 80% of the time.
+A null result would therefore rule out effects of that size with reasonable
+confidence, but not smaller ones. Proceeding to inference (Phase 3).
 """)

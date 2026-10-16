@@ -23,8 +23,7 @@ and a shipping recommendation for the PM.
 **Headline outcome.** Recommend **ship** the personalized homepage,
 conditional on an engineering ticket to mitigate a +29ms page-load
 regression before broader rollout. Trial conversion improved by
-**+2.54pp** (95% CI [+2.02, +3.06]), with **P(treatment > control) ≈
-100%** under the Bayesian re-analysis. The decision is robust across
+**+2.54pp** (95% CI [+2.02, +3.06]), with **P(treatment > control) >99.99%** under the Bayesian re-analysis. The decision is robust across
 six sensitivity checks (Phase 7) and the pipeline recovers the planted
 ground truth (true ATE +2.29pp vs estimated +2.54pp, inside the CI;
 Phase 8).
@@ -36,9 +35,9 @@ Phase 8).
 | Metric | Control | Treatment | Δ | 95% CI |
 |---|---:|---:|---:|---:|
 | **Trial → paid conversion** (primary) | 21.26% | 23.80% | **+2.54pp (+11.96%)** | [+2.02, +3.06]pp |
-| Trial watch hours | — | — | +0.87 hrs (+18.08%) | [+0.71, +1.02] |
-| Distinct titles watched | — | — | +0.51 (+17.49%) | [+0.42, +0.60] |
-| Day-7 active (guardrail) | — | — | +1.75pp (+4.05%) | [+1.13, +2.36] |
+| Trial watch hours | — | — | +0.87 hrs (+18.08%) | [+0.82, +0.92] |
+| Distinct titles watched | — | — | +0.51 (+17.49%) | [+0.48, +0.55] |
+| Day-7 active (guardrail) | — | — | +1.75pp (+4.05%) | [+1.14, +2.37] |
 | Page load time (guardrail) | — | — | **+29.3ms (+6.87%)** ⚠️ | [+28.3, +30.3] |
 
 **Design + inference summary:**
@@ -49,10 +48,10 @@ Phase 8).
 | Experiment window | 4 weeks (April 2026) |
 | Pre-committed MDE | 1pp absolute (~5.5% relative) |
 | Post-hoc detectable effect | 0.69pp (2× over-powered) |
-| Bayesian P(treatment > control) | ~100% (Beta-Binomial, 100k MC samples) |
+| Bayesian P(treatment > control) | >99.99% (Beta-Binomial, 100k MC samples) |
 | Multiple-testing correction | Holm-Bonferroni across 5 metrics — **all survive** |
 | Variance reduction (CUPED) | 2.5% on watch-hours secondary |
-| Segment coverage | **Positive lift in every segment** (device × country × source × tenure) |
+| Segment coverage | **Positive point estimate in every segment** (device, country, source, tenure); only the device difference is statistically supported |
 | Sensitivity robustness | **All 6 checks support ship** (see Phase 7 below) |
 | Ground-truth recovery | True ATE +2.29pp; estimate +2.54pp [2.02, 3.06] covers it; 300-rep CI coverage 95.3% (Phase 8) |
 
@@ -64,8 +63,7 @@ Phase 8).
 
 - Sample-ratio mismatch (SRM) chi-square test at strict α = 0.001
 - Covariate balance across categorical dimensions (country, device,
-  source, is_returning) and continuous covariates (prior watch hours,
-  page-load baseline)
+  source, is_returning) and the continuous pre-period covariate (prior watch hours)
 - Diagnostic charts (`01_categorical_balance.png`,
   `01_continuous_balance.png`)
 
@@ -75,7 +73,7 @@ Phase 8).
   but is **not a clean pass** (it fails at the more common 0.01). Treated
   as a data-quality incident: localized to Android, analysis re-run with
   and without it, root-causing is a pre-rollout action.
-- **Covariate balance revealed an Android-share imbalance of −1.08pp**
+- **Covariate balance revealed an Android-share imbalance of −1.09pp**
   in treatment. Consistent with a segment-specific assignment bug.
   Localizing the failure mode enabled a targeted sensitivity analysis
   (Phase 3) rather than a full experiment restart.
@@ -99,8 +97,7 @@ Phase 8).
 - **Actual sample: ~50,000 per arm** — 2× over-powered
 - **Post-hoc MDE: 0.69pp** — the observed +2.54pp lift is comfortably
   above the detection floor
-- Additional power confirmed adequate for segment-level analyses (TV
-  cohort at ~5k per arm is the tightest constraint)
+- Segment-level power is limited: TV has only ~5k users per arm, so its CI is wide
 
 ---
 
@@ -120,7 +117,7 @@ Phase 8).
 ### Key findings
 
 - **Primary lift: +2.54pp** (95% CI [+2.02, +3.06], z = 9.62, p < 10⁻²⁰)
-- **One-sided test against the 1pp MDE bar: z = 5.83** — the lift is
+- **One-sided test against the 1pp MDE bar: z = 5.84** — the lift is
   significantly above the ship threshold, not merely above zero
 - **Android sensitivity: +2.32pp** (95% CI [+1.67, +2.96]) — direction
   and significance preserved; the SRM finding does not overturn the
@@ -143,10 +140,9 @@ Phase 8).
 
 ### Key findings
 
-- **P(treatment > control) ≈ 100%**, posterior mean lift +2.54pp,
+- **P(treatment > control) >99.99%**, posterior mean lift +2.54pp,
   95% credible interval [+2.02, +3.06]pp
-- **Prior sensitivity: posterior mean varies by < 0.05pp** across all
-  three priors tested — the result is not driven by prior choice
+- **Prior sensitivity: posterior mean varies by about 0.05pp** (+2.54pp to +2.49pp) across the three priors tested — the result is not driven by prior choice
 - **ROPE check: posterior mass sits entirely outside the ±0.5pp
   practical-equivalence band** — the effect is both statistically
   credible AND practically meaningful
@@ -178,8 +174,7 @@ Phase 8).
   prior_watch_hours barely correlates with trial outcomes (ρ ≈ 0.16 —
   most trialists are literally new users with no prior history). The
   framework is now in place for future experiments on returning-user
-  cohorts where ρ ≈ 0.5-0.7 and CUPED typically delivers 20-50% CI
-  reduction.
+  cohorts where ρ ≈ 0.5-0.7 and CUPED is often reported to cut variance by 20-50%.
 - **No sign of Simpson's paradox here.** The lift is positive within
   every segment and arms are balanced on covariates (bar the Android
   gap), so the aggregate is not a composition artifact. This is a check
@@ -236,7 +231,7 @@ Phase 8).
 | **A. Weekly ATE** | Lift +2.68 / +2.51 / +3.03 / +1.95pp across weeks 1-4; pooled +2.54pp | ✅ Stable, no novelty decay |
 | **B. Sequential looks (Pocock K=4)** | \|z\| = 5.08 at end of week 1, well above Pocock threshold 2.361 | ✅ An early look would not have changed the call (illustrative; design was fixed-horizon) |
 | **C. Sample-size sensitivity** | Ship call holds down to **10% subsample** (~10k users) | ✅ Full 100k was not required |
-| **D. Framework reconciliation** | Frequentist p ≈ 0 with +2.54pp; Bayesian P(T>C) = 100% with matching +2.54pp | ✅ Frameworks agree |
+| **D. Framework reconciliation** | Frequentist p ≈ 0 with +2.54pp; Bayesian P(T>C) >99.99% with matching +2.54pp | ✅ Frameworks agree |
 | **E. A/A test** | 500 random splits of control → empirical FPR 3.6%, median p-value 0.496 | ✅ Pipeline validated on known-null data |
 | **F. Bootstrap CI** | 10k Bernoulli bootstrap [+2.03, +3.06]pp vs analytical [+2.02, +3.06]pp — max bound difference 0.004pp | ✅ Normal approximation is safe |
 
@@ -244,8 +239,7 @@ Phase 8).
 (i) time-of-experiment novelty effects, (ii) peeking / sequential-look
 inflation, (iii) sample size (would have shipped at N/10),
 (iv) framework choice, (v) pipeline validation on known-null data, and
-(vi) CI-computation method. None of these are typical A/B test failure
-modes — the recommendation is not fragile.
+(vi) CI-computation method. These cover the usual ways an A/B result turns out to be fragile, and none of them changes the decision.
 
 ---
 
@@ -268,7 +262,7 @@ modes — the recommendation is not fragile.
   all device and tenure CIs. Empirical coverage 95.3% over 300 sims.
 - Only the device interaction is significant (p≈0.01).
 - 13 of 15 segment tests survive Holm (not TV; not CA).
-- A readout dated before 2026-05-12 would have censored ≤18% of users.
+- A readout on 2026-05-08 would have censored ~18% of users; every cohort had matured by 2026-05-12.
 
 ---
 
@@ -314,12 +308,11 @@ segments after unblinding would inflate family-wise error and open
 the door to false-positive segment claims.
 
 **Why the experiment ran for 4 weeks (not shorter).**
-The aggregate metric needed ~24k users per arm at the 1pp MDE. But
-the SEGMENT analyses need power *within* segments — TV at ~5k per arm
-is already borderline. Powering only for the aggregate would have
-zeroed out the segment story. Rule of thumb applied: power for the
-smallest segment you'd want to make a decision about, not just the
-aggregate.
+The aggregate metric needed ~24k users per arm at the 1pp MDE, about
+two weeks of traffic. Four weeks covers two full 14-day trial cycles and
+four weekly cycles, so weekday/weekend patterns and early novelty are
+averaged in rather than over-represented. The extra sample also helps the
+segment analyses, though TV (~5k per arm) remains underpowered.
 
 **Why disclose the +29ms page-load regression rather than exclude the metric.**
 Suppression of an unfavorable secondary result is the fastest way to
@@ -344,8 +337,7 @@ shape for a mature ship recommendation.
 - **CUPED variance reduction is modest** (2.5%) because the pre-period
   covariate correlates weakly with trial outcomes on a
   first-time-signup cohort. Framework is in place for future
-  experiments on returning-user metrics where CUPED typically
-  delivers 20-50% CI reduction.
+  experiments on returning-user metrics where CUPED is often reported to cut variance by 20-50%.
 - **TV segment is underpowered** at ~5k users per arm. Point estimate
   is positive (+0.42pp) but not significant. Not evidence of "no
   effect on TV" — evidence of "insufficient N to conclude on TV."
@@ -365,8 +357,7 @@ shape for a mature ship recommendation.
   effects exists to pool from. Bayesian priors are appropriately
   uninformative as a result.
 
-See the "Path to next tests" section in the decision memo for the
-prioritized follow-up experiment queue.
+See section 7 ("Next steps") of the decision memo for the follow-up actions.
 
 ---
 
@@ -411,7 +402,10 @@ Sequential order — each notebook builds on the previous:
 06_hero_figure.py            composite chart for memo + README
    ↓
 07_sensitivity_robustness.py weekly ATE + Pocock + N-subsample + framework
-                             reconciliation
+                             reconciliation + A/A test + bootstrap CI
+   ↓
+08_validation_and_heterogeneity.py  ground-truth recovery + CI coverage +
+                             outcome maturity + interaction tests + Holm
 ```
 
 Read top-to-bottom for the full story; skip directly to Phase 3 for

@@ -81,9 +81,11 @@ print(
     f"{src_bot['segment']} trails ({src_bot['effect_abs']*100:+.2f}pp).\n"
     f"  - Tenure:  returning {ret_row['effect_abs']*100:+.2f}pp vs new "
     f"{new_row['effect_abs']*100:+.2f}pp.\n"
-    "Pattern: mobile + returning users + referral traffic drive most of the win. "
-    "Ship to everyone -- but if rollout has to be phased, prioritize iOS/Android "
-    "and returning-user cohorts first."
+    "These are within-segment cuts, not tests of whether the effect DIFFERS "
+    "between segments. Phase 8's interaction tests support a difference by "
+    "device only (p~0.01); the gaps across country, source and tenure are "
+    "consistent with noise. Ship to everyone; if rollout has to be phased, "
+    "start with iOS/Android."
 )
 
 
@@ -138,9 +140,9 @@ print(f"\n📊 Saved -> {FIG_DIR}/05_segment_forest.png")
 
 print(
     "📌 Verdict (for the PM): One chart tells the whole HTE story. Every "
-    "segment is positive (all dots right of zero), but mobile and returning "
-    "users get most of the win. Use this in the leadership review when "
-    "asked 'who benefits and who doesn't?'"
+    "point estimate is positive (TV's CI includes zero), and the clearest "
+    "difference is by device: mobile gains most, TV least. Use this in the "
+    "leadership review when asked 'who benefits and who doesn't?'"
 )
 
 
@@ -168,15 +170,16 @@ print(
 )
 
 print(
-    f"\n📌 Verdict (for the PM): CUPED cut the uncertainty around our lift "
-    f"estimate by {cuped.variance_reduction_pct:.1f}% on this metric. The gain "
+    f"\n📌 Verdict (for the PM): CUPED cut the variance of our lift estimate "
+    f"by {cuped.variance_reduction_pct:.1f}% on this metric (the CI is "
+    f"{(1 - (1 - cuped.variance_reduction_pct / 100) ** 0.5) * 100:.1f}% narrower). The gain "
     f"is modest here because prior watch hours correlate only weakly "
     f"({cuped.correlation:.2f}) with trial watch hours -- most trial users "
     "are brand new and have no prior history to lean on. On metrics with "
     "stronger pre-period signal (returning-user revenue, repeat engagement) "
-    "CUPED typically cuts CIs by 20-50%, which is why it's the default at "
-    "Microsoft, Netflix, and Booking. The method matters; the magnitude "
-    "depends on the covariate."
+    "CUPED is often reported to cut variance by 20-50%, which is why large "
+    "experimentation platforms use it by default. The method matters; the "
+    "magnitude depends on the covariate."
 )
 
 
@@ -248,21 +251,24 @@ print("\n" + "=" * 78)
 print("PHASE 5 CONCLUSION -- KEY INSIGHTS")
 print("=" * 78)
 print(
-    "1. The lift is universal but uneven. Every device, country, source, "
-    "and tenure segment shows a positive effect, but mobile users (iOS, "
-    "Android) gain ~3pp while TV users gain ~0.4pp. The personalization "
-    "engine resonates most where users have the most input to draw on.\n\n"
+    "1. The lift is broad but uneven. Every device, country, source and "
+    "tenure segment has a positive point estimate (TV's CI includes zero): "
+    "mobile users (iOS, Android) gain ~3pp while TV users gain ~0.4pp. This "
+    "difference by device is the one a formal interaction test supports "
+    "(Phase 8, p~0.01).\n\n"
 
-    "2. Returning users respond more than new users (+3.3pp vs +2.3pp). "
-    "This is mechanism-consistent -- recommendations get better with "
-    "viewing history -- and is the strongest argument for keeping the "
-    "feature even if novelty effects decay over time.\n\n"
+    "2. Returning users show a larger lift in percentage points (+3.3pp vs "
+    "+2.3pp), but their baseline conversion is higher and their RELATIVE lift "
+    "is lower (+10.8% vs +12.4%). The interaction test finds no tenure effect "
+    "(Phase 8, p~0.8), so this is not evidence that personalization works "
+    "better with viewing history.\n\n"
 
-    "3. CUPED reduced the engagement-metric CI by 2.5% here. The gain is "
+    f"3. CUPED reduced the engagement-metric variance by "
+    f"{cuped.variance_reduction_pct:.1f}% here. The gain is "
     "modest because prior_watch_hours correlates weakly with trial_watch_hours "
     "in a population dominated by new users. The framework is the win -- on "
     "metrics with stronger pre-period signal (returning-user revenue, repeat "
-    "engagement) CUPED routinely cuts CIs by 20-50%.\n\n"
+    "engagement) CUPED is often reported to cut variance by 20-50%.\n\n"
 
     "4. Simpson's paradox is real, but it isn't biting us. The toy demo "
     "showed how a +2pp segment-level win can look like a -22pp aggregate "
@@ -272,6 +278,6 @@ print(
 
     "5. Ship recommendation holds and gets sharper. Original recommendation: "
     "ship to 100% pending engineering follow-up on the page-load regression. "
-    "Updated: same, plus if rollout has to be staged, start with mobile and "
-    "returning-user cohorts -- they capture the largest expected gain."
+    "Updated: same, plus if rollout has to be staged, start with iOS and "
+    "Android, where the lift is largest."
 )

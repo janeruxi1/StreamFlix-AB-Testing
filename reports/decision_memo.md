@@ -13,16 +13,16 @@
 
 > **Recommendation: SHIP** the personalized "Recommended For You" homepage to 100% of trial users, **conditional on** engineering opening a follow-up ticket to mitigate a +29ms page-load regression before broader rollout.
 
-The 4-week experiment delivered an unambiguous win on the primary metric. The headline lift is large, statistically credible, robust to data-quality concerns, positive in every user segment, and well-supported by engagement secondaries. The only concern — a real but sub-perceptibility latency regression — is small relative to the conversion gain.
+The 4-week experiment delivered an unambiguous win on the primary metric. The headline lift is large, statistically credible, robust to data-quality concerns, positive in every user segment (not significant for TV), and well-supported by engagement secondaries. The only concern — a real but sub-perceptibility latency regression — is small relative to the conversion gain.
 
 | Metric | Result | Interpretation |
 |---|---|---|
 | **Trial → paid conversion** | **+2.54pp (+11.96%)**, 95% CI [+2.02, +3.06]pp | Decisive ship signal |
-| **P(treatment > control)** | **~100%** (Bayesian) | Effectively certain |
+| **P(treatment > control)** | **>99.99%** (Bayesian) | Effectively certain |
 | **Sensitivity (excl Android)** | +2.32pp (+10.85%) | Robust to Phase 1 finding |
 | **Watch hours during trial** | +0.87 hrs (+18.08%) | Engagement reinforces conversion |
 | **Distinct titles watched** | +0.51 (+17.49%) | Catalog discovery improved |
-| **Segment coverage** | Positive in **every** segment (devices, countries, sources, tenure) | Universal win, mobile leads |
+| **Segment coverage** | Positive point estimate in **every** segment (TV's CI includes zero) | Broad win; only the device difference is statistically supported |
 | **Day-7 active (guardrail)** | +1.75pp (+4.05%) | Early engagement healthy |
 | **Page-load (guardrail)** | **+29.3 ms (+6.87%)** | 🚩 Real regression — see Risks |
 
@@ -30,7 +30,7 @@ The 4-week experiment delivered an unambiguous win on the primary metric. The he
 
 ## 1. Background
 
-StreamFlix's 14-day free trial converts at ~18% to paid historically (the control arm in this experiment converted at 21.3%, so the 18% planning figure was conservative). The Growth PM hypothesized that replacing the generic "Top Picks" homepage with a personalized "Recommended For You" homepage would improve conversion by at least 1pp absolute (≈5.5% relative). A 4-week, 50/50, user-level randomized experiment was run on ~100,000 new trialists, with multiple metrics and guardrails defined in advance.
+StreamFlix's 14-day free trial converts at ~18% to paid historically (the control arm in this experiment converted at 21.3%; at that baseline the 1pp MDE needs 26,722 users per arm rather than 23,665, still well below the ~50,000 collected). The Growth PM hypothesized that replacing the generic "Top Picks" homepage with a personalized "Recommended For You" homepage would improve conversion by at least 1pp absolute (≈5.5% relative). A 4-week, 50/50, user-level randomized experiment was run on ~100,000 new trialists, with multiple metrics and guardrails defined in advance.
 
 Full scenario: [`reports/scenario_brief.md`](./scenario_brief.md).
 
@@ -39,7 +39,7 @@ Full scenario: [`reports/scenario_brief.md`](./scenario_brief.md).
 ## 2. Data quality & power
 
 ### Sample Ratio Mismatch
-The SRM chi-square test (50,461 control vs 49,539 treatment) gives p = 0.0036. That clears the α = 0.001 threshold commonly used for automated SRM alerts, but it is **not a clean pass**: many teams alert at 0.01, and a 0.9% split imbalance at this N is unlikely to be chance. Covariate-balance follow-up localized it to an **Android-share imbalance** (−1.08pp), consistent with a device-specific assignment bug. Because the loss is concentrated in one device and the remaining users are balanced on every other covariate, we treat it as a documented data-quality incident, run the primary analysis with and without Android (below), and make root-causing the bug a pre-rollout action. If the Android result had differed materially, the recommendation would have been *hold*, not ship.
+The SRM chi-square test (50,461 control vs 49,539 treatment) gives p = 0.0036. That clears the α = 0.001 threshold commonly used for automated SRM alerts, but it is **not a clean pass**: many teams alert at 0.01, and a 0.9% split imbalance at this N is unlikely to be chance. Covariate-balance follow-up localized it to an **Android-share imbalance** (−1.09pp), consistent with a device-specific assignment bug. Because the loss is concentrated in one device and the remaining users are balanced on every other covariate, we treat it as a documented data-quality incident, run the primary analysis with and without Android (below), and make root-causing the bug a pre-rollout action. If the Android result had differed materially, the recommendation would have been *hold*, not ship.
 
 ### Power
 The experiment was **well-powered for the headline metric**:
@@ -47,7 +47,7 @@ The experiment was **well-powered for the headline metric**:
 - Actual sample collected: ~50,000 / arm (~2× over-powered)
 - **Post-hoc MDE: 0.69pp** absolute (3.81% relative)
 
-The observed conversion lift (+2.54pp) is comfortably above this threshold, so the result is statistically credible.
+The observed lift (+2.54pp) is well above this, and a true effect of 0.69pp or more would have been detected 80% of the time.
 
 ---
 
@@ -73,8 +73,8 @@ The observed conversion lift (+2.54pp) is comfortably above this threshold, so t
 ### 4.1 Primary metric (conversion)
 
 - Frequentist: **+2.54pp, 95% CI [+2.02, +3.06], p < 0.001**.
-- One-sided test against the 1pp MDE bar: z = +5.83, p ≈ 2.7 × 10⁻⁹ → the lift is *significantly above* the ship threshold, not merely above zero.
-- Bayesian: **P(treatment > control) ≈ 100%**, posterior mean lift +2.54pp, 95% credible interval [+2.02, +3.06]pp, expected loss of shipping ≈ 0.
+- One-sided test against the 1pp MDE bar: z = +5.84, p ≈ 2.7 × 10⁻⁹ → the lift is *significantly above* the ship threshold, not merely above zero.
+- Bayesian: **P(treatment > control) >99.99%**, posterior mean lift +2.54pp, 95% credible interval [+2.02, +3.06]pp, expected loss of shipping ≈ 0.
 - ROPE check: posterior lift mass sits *entirely outside* the ±0.5pp practical-equivalence band.
 
 ### 4.2 Sensitivity (excluding Android)
@@ -104,7 +104,7 @@ The treatment effect is **positive in every segment we examined**, but the magni
 
 ### 4.5 Variance reduction (CUPED)
 
-Applied CUPED on `trial_watch_hours` using `prior_watch_hours` as the pre-experiment covariate. Variance reduction was modest here (~2.5%) because most trialists have no prior viewing history (correlation ≈ 0.16). The framework is now in place for future experiments where the covariate has stronger signal (returning-user revenue, repeat engagement), where CUPED typically reduces CI width by 20–50%.
+Applied CUPED on `trial_watch_hours` using `prior_watch_hours` as the pre-experiment covariate. Variance reduction was modest here (~2.5%, so the CI is ~1.3% narrower) because most trialists have no prior viewing history (correlation ≈ 0.16). The framework is now in place for future experiments where the covariate has stronger signal (returning-user revenue, repeat engagement), where CUPED is often reported to reduce variance by 20–50%.
 
 ### 4.6 Multiple-testing correction
 
@@ -123,11 +123,11 @@ Beyond the direct sensitivity in 4.2 (excl-Android) and the framework diversity 
 | **A. Weekly ATE** | Is the +2.54pp lift stable, or a novelty spike that would decay? | Lift +2.68 / +2.51 / +3.03 / +1.95 pp across the 4 experiment weeks; pooled +2.54pp | ✅ Stable, no novelty decay |
 | **B. Sequential looks (Pocock)** | If the team had peeked mid-experiment, would we have called the winner correctly under a proper α-spending correction? | \|z\| = 5.08 at end of week 1, well above the Pocock K=4 threshold of 2.361 | ✅ Early look would not have changed the call (illustrative; this was a fixed-horizon design) |
 | **C. Sample-size sensitivity** | At what N does the decision flip? | Ship call holds down to a **10% subsample** (~10,000 users) | ✅ Full 100k was not required |
-| **D. Bayesian ↔ Frequentist reconciliation** | Do both statistical frameworks agree on the ship decision? | Frequentist p ≈ 0 with +2.54pp lift; Bayesian P(T>C) = **100.00%** with matching +2.54pp posterior mean and near-identical 95% intervals | ✅ Frameworks agree |
+| **D. Bayesian ↔ Frequentist reconciliation** | Do both statistical frameworks agree on the ship decision? | Frequentist p ≈ 0 with +2.54pp lift; Bayesian P(T>C) **>99.99%** with matching +2.54pp posterior mean and near-identical 95% intervals | ✅ Frameworks agree |
 | **E. A/A test** | Does the pipeline return "no effect" when there truly isn't one? | 500 random splits of control-only data → empirical false-positive rate **3.6%** (expected ~5%), median p-value 0.496 (uniform-consistent), p-values distributed across bins as expected | ✅ Pipeline validated on known-null data |
 | **F. Bootstrap CI** | Does the analytical normal-approximation CI match a non-parametric bootstrap? | 10k-iteration Bernoulli bootstrap CI [+2.03, +3.06]pp vs analytical [+2.02, +3.06]pp — **max bound difference 0.004pp** | ✅ Normal approximation is safe |
 
-**Read for stakeholders:** the +2.54pp headline is robust to (i) time-of-experiment novelty effects, (ii) peeking / sequential-look inflation, (iii) sample size (would have shipped at N/10), (iv) framework choice (frequentist and Bayesian give the same answer), (v) pipeline validation on known-null data, and (vi) CI-computation method. None of these are typical A/B-test failure modes.
+**Read for stakeholders:** the +2.54pp headline is robust to (i) time-of-experiment novelty effects, (ii) peeking / sequential-look inflation, (iii) sample size (would have shipped at N/10), (iv) framework choice (frequentist and Bayesian give the same answer), (v) pipeline validation on known-null data, and (vi) CI-computation method. These cover the usual ways an A/B result turns out to be fragile, and none of them changes the decision.
 
 See [`notebooks/07_sensitivity_robustness.py`](../notebooks/07_sensitivity_robustness.py) for the full analysis + charts (`reports/figures/07_weekly_ate.png`, `07_sequential_looks.png`).
 
@@ -142,7 +142,7 @@ Full metric coverage — every declared metric, at a glance:
 | Guardrail | Threshold | Observed | Status |
 |---|---|---|---|
 | Day-7 active rate | No drop > 1pp | +1.75pp | ✅ Pass (improved) |
-| Page load time | No regression > 50ms | **+29.3 ms (+6.87%)** | ⚠️ Threshold met, but real regression |
+| Page load time | No regression > 50ms | **+29.3 ms (+6.87%)** | ⚠️ Within threshold, but a real regression |
 
 **Harm-test summary.** Of every declared metric (primary + 2 secondary + 2 guardrails), **only page-load moves against treatment**. All other movements are positive and significant. That's the ideal pattern for a shipping recommendation — one focused concern (page load), no scattered secondary-metric harm elsewhere.
 
@@ -183,7 +183,7 @@ The treatment regressed page-load time by +29ms (+6.87%) with a very tight CI [+
 ## 8. Statistical appendix
 
 - Effect-size CI: bootstrap (10k draws) confirmed the analytical CI within 0.01pp. A 300-replication simulation also gave 95.3% empirical coverage of the true ATE (Phase 8).
-- Prior sensitivity (Bayesian): tested Beta(1,1), Beta(18,82), Beta(180,820) — posterior mean lift varies by < 0.05pp.
+- Prior sensitivity (Bayesian): tested Beta(1,1), Beta(18,82), Beta(180,820) — posterior mean lift varies by about 0.05pp (+2.54pp to +2.49pp).
 - CUPED: theta = 0.15, ρ(Y, X) = 0.16, observed variance reduction 2.5%. Standard formula y_cuped = y − θ(x − x̄) with θ = Cov(y, x) / Var(x) estimated on the combined sample.
 - Segment forest plot: see `reports/figures/05_segment_forest.png`.
 - All raw inference and figures: `notebooks/03_frequentist.py`, `notebooks/04_bayesian.py`, `notebooks/05_segmentation.py`, `reports/figures/`.

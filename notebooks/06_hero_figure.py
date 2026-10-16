@@ -99,7 +99,7 @@ ax_kpi.text(
 )
 ax_kpi.text(
     0.25, 0.20,
-    f"+{primary.effect_relative*100:.1f}% trial-to-paid conversion",
+    f"+{primary.effect_relative*100:.1f}% relative lift in trial-to-paid conversion",
     ha="center", va="center", fontsize=13, color="#2A4365",
 )
 
@@ -121,7 +121,7 @@ ax_kpi.text(
 )
 ax_kpi.text(
     0.60, 0.12,
-    "100%  (Bayesian)",
+    ">99.99%  (Bayesian)",
     ha="left", va="center", fontsize=18, fontweight="bold", color="#2A4365",
 )
 

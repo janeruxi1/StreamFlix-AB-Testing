@@ -5,13 +5,11 @@ There is no external download — the data is reproducible from the simulator.
 
 ## Why synthetic?
 
-A custom-designed dataset signals stronger experimentation skill than reusing a
-common public dataset. It lets us:
+A simulated dataset with known ground truth lets us:
 
 - Define a realistic scenario (StreamFlix trial-to-paid funnel) end-to-end
 - Embed a **known ground truth** (true treatment effect, heterogeneity)
-- Engineer **realistic edge cases** (SRM bug, page-render glitch, HTE,
-  Simpson's paradox setup) so the analysis can detect them
+- Engineer **realistic edge cases** (SRM bug, page-render glitch, heterogeneous effects) so the analysis can detect them
 - Include a **pre-experiment covariate** (`prior_watch_hours`) for CUPED
 - Demonstrate awareness of metric tiers (primary / secondary / guardrails)
 

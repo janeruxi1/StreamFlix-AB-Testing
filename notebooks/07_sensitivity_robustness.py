@@ -3,8 +3,8 @@ Phase 7 — Sensitivity & Robustness
 ====================================
 
 The primary result (+2.54pp conversion lift) is decisive on paper. Before
-signing off on shipping, we need to answer four questions a senior DS
-would ask that Phases 3-6 don't directly address:
+signing off on shipping, six questions that Phases 3-6 don't directly
+address:
 
   A. Is the effect stable over the 4-week window, or is it a novelty spike
      that would decay if we shipped?
@@ -15,14 +15,14 @@ would ask that Phases 3-6 don't directly address:
      Equivalently: if we'd stopped early with N/2 users, could we have
      shipped with the same confidence?
   D. Do the frequentist and Bayesian frameworks agree on the ship
-     decision? A single-framework result is fragile; agreement across
-     both is the interview-strong signal.
+     decision?
+  E. A/A test: does the pipeline return 'no effect' when there is none?
+  F. Does a bootstrap CI match the analytical normal-approximation CI?
 
-Senior framing: "Every experiment ships against a set of implicit
-assumptions — that the effect is stable, that N was enough, that peeking
-wouldn't have inflated Type-I. Sensitivity analysis makes those
-assumptions explicit and testable. If the recommendation flips under
-any reasonable variation, the recommendation isn't robust."
+Every experiment ships against implicit assumptions: that the effect is
+stable, that N was enough, that peeking wouldn't have inflated Type-I
+error. Sensitivity analysis makes those assumptions explicit and testable.
+If the recommendation flips under a reasonable variation, it isn't robust.
 """
 import sys
 from pathlib import Path
@@ -359,14 +359,15 @@ print(f"Frequentist          {BASELINE.effect_absolute*100:>+16.2f}pp "
 print(f"Bayesian (Beta(1,1)) {posterior_lift*100:>+16.2f}pp "
       f"{'['+f'{posterior_ci[0]*100:+.2f}, {posterior_ci[1]*100:+.2f}'+'] (CrI)':>22} "
       f"{'✓ ship' if p_trt_better > 0.95 else '✗ hold':>8}")
-print(f"\nBayesian P(treatment > control): {p_trt_better:.4f}")
+print(f"\nBayesian P(treatment > control): {'>0.9999' if p_trt_better >= 0.9999 else f'{p_trt_better:.4f}'}")
 
 freq_ship = BASELINE.significant and BASELINE.effect_absolute > 0
 bayes_ship = p_trt_better > 0.95
 
 if freq_ship and bayes_ship:
     print(f"\n💡 VERDICT: Both frameworks agree — SHIP. "
-          f"Frequentist p={BASELINE.p_value:.2e}, Bayesian P(T>C)={p_trt_better:.2%}. "
+          f"Frequentist p{'<1e-15' if BASELINE.p_value < 1e-15 else '=' + f'{BASELINE.p_value:.2e}'}, "
+          f"Bayesian P(T>C) {'>99.99%' if p_trt_better >= 0.9999 else '= ' + f'{p_trt_better:.2%}'}. "
           f"The decision is not driven by framework choice.")
 elif freq_ship != bayes_ship:
     print(f"\n⚠️  VERDICT: Frameworks DISAGREE. "
@@ -459,7 +460,7 @@ print("=" * 78)
 print("""
 The primary analytical CI [+2.02, +3.06]pp assumes normal approximation
 to the sampling distribution of the difference in proportions. For a
-100k-user experiment with ~5% conversion, the approximation is excellent,
+100k-user experiment with ~21% conversion, the approximation is excellent,
 but non-parametric bootstrap is the gold-standard cross-check.
 
 For binary outcomes, sampling from Binomial(n, p_hat) is asymptotically
@@ -540,6 +541,6 @@ Reading this for the memo:
 The +{BASELINE.effect_absolute*100:.2f}pp headline lift is robust to (i) time-of-experiment
 effects, (ii) peeking / sequential-look inflation, (iii) sample size,
 (iv) framework choice, (v) pipeline validation on known-null data, and
-(vi) CI computation method. None of these are typical A/B test failure
-modes — the recommendation is not fragile.
+(vi) CI computation method. These cover the usual ways an A/B result
+turns out to be fragile, and none of them changes the decision.
 """)

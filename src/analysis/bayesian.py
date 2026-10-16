@@ -61,7 +61,7 @@ class BayesianResult:
             f"  Posterior mean treatment:  {self.mean_treatment:.4f}\n"
             f"  Posterior mean lift:       {self.mean_lift:+.4f}\n"
             f"  95% credible interval:     [{self.credible_lower:+.4f}, {self.credible_upper:+.4f}]\n"
-            f"  P(treatment > control):    {self.p_treatment_better:.4%}\n"
+            f"  P(treatment > control):    {'>99.99%' if self.p_treatment_better >= 0.9999 else f'{self.p_treatment_better:.2%}'}\n"
             f"  Expected loss of shipping: {self.expected_loss_ship:.6f}\n"
             f"  Expected gain of shipping: {self.expected_loss_not_ship:.6f}"
         )

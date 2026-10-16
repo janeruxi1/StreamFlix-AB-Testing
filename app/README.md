@@ -26,10 +26,10 @@ Two modes:
    - Bayesian P(treatment > control), 95% credible interval, expected loss of shipping
    - Posterior distribution chart
 
-## Deploy publicly (Streamlit Community Cloud — free)
+## Live demo
 
--  Streamlit public URL  `https://janeruxi1-ab-testing-project.streamlit.app/`.
+Deployed on Streamlit Community Cloud: [janeruxi1-ab-testing-project.streamlit.app](https://janeruxi1-ab-testing-project.streamlit.app/)
 
 ## How it stays correct
 
-The app imports directly from `src/analysis/` — the same code path the analysis notebooks and the 62 pytest unit tests use. If the test suite is green in CI, the demo is mathematically correct.
+The app imports directly from `src/analysis/` — the same code path the analysis notebooks and the 62 pytest unit tests use. The demo therefore runs the same tested functions as the analysis.

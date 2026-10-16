@@ -29,7 +29,7 @@ Replace the generic homepage with a **"Recommended For You"** homepage powered b
 - **Control:** Existing "Top Picks" homepage
 - **Treatment:** "Recommended For You" homepage
 - **Duration:** 4 weeks (covers 2x the 14-day trial cycle)
-- **Sample size:** ~50,000 users per arm (per our power analysis — see Phase 2)
+- **Sample size:** ~50,000 users per arm (four weeks of traffic at ~3,500 new trialists/day; Phase 2 shows ~23,700 per arm is enough for the 1pp MDE)
 
 ## Metrics
 

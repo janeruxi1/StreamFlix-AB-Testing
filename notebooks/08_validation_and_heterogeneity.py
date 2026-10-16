@@ -24,6 +24,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
@@ -35,6 +36,9 @@ from src.analysis.segmentation import segment_lifts
 from src.data.loader import load_experiment
 from src.data.simulate import SimConfig, simulate_experiment
 
+FIG_DIR = Path("reports/figures")
+FIG_DIR.mkdir(parents=True, exist_ok=True)
+
 
 def ate_test(df: pd.DataFrame):
     c, t = df[df["group"] == "control"], df[df["group"] == "treatment"]
@@ -45,6 +49,8 @@ def ate_test(df: pd.DataFrame):
 
 # ---------------------------------------------------------------------
 # A. Ground-truth recovery (same dataset as Phases 1-7)
+# The dataset is synthetic, so the true effect for every user is known. Do the
+# estimated effects and their 95% CIs cover the truth, overall and by segment?
 # ---------------------------------------------------------------------
 print("=== A. Ground-truth recovery (data/experiment.csv, seed 42) ===")
 df_truth, truth = simulate_experiment(SimConfig(), return_truth=True)
@@ -71,9 +77,27 @@ print(f"\nTrue ATE {true_ate * 100:+.2f}pp vs estimated {res.effect_absolute * 1
       "so this is a clear win by construction. Real effects are rarely this big - a "
       "+12% relative lift in real life deserves extra bug-hunting.")
 
+fig, ax = plt.subplots(figsize=(10, 4.5))
+y = np.arange(len(rec))[::-1]
+ax.errorbar(rec["est_pp"], y, xerr=[rec["est_pp"] - rec["ci_lo"], rec["ci_hi"] - rec["est_pp"]],
+            fmt="o", color="#5B8FF9", ecolor="#5B8FF9", capsize=3, label="Estimate, 95% CI")
+ax.scatter(rec["true_pp"], y, marker="D", color="#F6BD16", zorder=3, label="True effect")
+ax.axvline(0, color="gray", linewidth=1)
+ax.set_yticks(y)
+ax.set_yticklabels(rec["effect"])
+ax.set_xlabel("Conversion lift (pp)")
+ax.set_title("Ground-truth recovery: estimated vs true effects")
+ax.legend(loc="upper left")
+plt.tight_layout()
+plt.savefig(FIG_DIR / "08_ground_truth_recovery.png", dpi=140, bbox_inches="tight")
+print(f"{int(rec['covered'].sum())} of {len(rec)} CIs cover the true effect")
+print("Saved -> reports/figures/08_ground_truth_recovery.png")
+
 
 # ---------------------------------------------------------------------
 # B. Coverage simulation: do nominal 95% CIs cover the truth ~95% of time?
+# One dataset can cover the truth by luck. Re-simulate the experiment 300 times
+# with new seeds and count how often the 95% CI covers the true ATE.
 # ---------------------------------------------------------------------
 print("\n=== B. CI coverage over 300 replications (n=20,000 each) ===")
 N_REPS, covered, errors = 300, 0, []
@@ -93,6 +117,9 @@ print("Reading: coverage near 95% means the CI machinery is calibrated; a clearl
 
 # ---------------------------------------------------------------------
 # C. Outcome maturity
+# Conversion is measured over a 14-day trial. A user who signed up less than
+# 14 days before the analysis date has not finished the window, so their
+# outcome is censored.
 # ---------------------------------------------------------------------
 print("\n=== C. Outcome maturity (14-day conversion window) ===")
 for label, when in [("memo-date draft (2026-05-08)", "2026-05-08"),
@@ -108,6 +135,9 @@ print("Reading: signups run Apr 1-28, so the last 14-day window closes ~May 12. 
 
 # ---------------------------------------------------------------------
 # D. Formal heterogeneity: LR test of treatment x segment interaction
+# Per-segment p-values in Phase 5 don't test whether the effect DIFFERS between
+# segments. A treatment x segment interaction in a logit model, compared with a
+# likelihood-ratio test, does.
 # ---------------------------------------------------------------------
 print("\n=== D. Formal HTE test (logit, LR test of interaction) ===")
 df["treat"] = (df["group"] == "treatment").astype(int)
@@ -131,6 +161,8 @@ print("Reading: only the device interaction is significant (p~0.01). The planted
 
 # ---------------------------------------------------------------------
 # E. Multiplicity across all segment tests
+# Phase 5 ran 15 segment tests. Holm's step-down correction controls the
+# family-wise error rate across all of them.
 # ---------------------------------------------------------------------
 print("\n=== E. Holm correction across all segment-level tests ===")
 seg_rows = []
@@ -148,6 +180,8 @@ print(f"\n{len(seg)} segment tests; {int(seg['significant'].sum())} significant 
 
 # ---------------------------------------------------------------------
 # F. Skewed secondary metric
+# Watch hours are right-skewed (gamma-shaped). Does the Welch t-test result
+# from Phase 3 survive a bootstrap CI, a log transform and a rank test?
 # ---------------------------------------------------------------------
 print("\n=== F. trial_watch_hours: skew-robust checks ===")
 c = df.loc[df["group"] == "control", "trial_watch_hours"].values

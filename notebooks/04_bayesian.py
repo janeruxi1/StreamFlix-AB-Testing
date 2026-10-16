@@ -31,6 +31,17 @@ from src.analysis.bayesian import bayesian_ab_binary
 FIG_DIR = Path("reports/figures")
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
+
+def fmt_p(p: float) -> str:
+    """Format a Monte Carlo probability. With 100k draws, 0 or 1 only means
+    'beyond what the sample can resolve', so never print 100% or 0%."""
+    if p >= 0.9999:
+        return ">99.99%"
+    if p <= 0.0001:
+        return "<0.01%"
+    return f"{p:.2%}"
+
+
 df = load_experiment("data/experiment.csv").dropna(subset=["group", "converted"])
 ctl = df[df["group"] == "control"]
 trt = df[df["group"] == "treatment"]
@@ -76,7 +87,7 @@ print(
 print("\n" + "=" * 78)
 print("B. HEADLINE PROBABILITIES")
 print("=" * 78)
-print(f"  P(treatment > control):     {result.p_treatment_better:.4%}")
+print(f"  P(treatment > control):     {fmt_p(result.p_treatment_better)}")
 print(f"  Posterior mean lift:        {result.mean_lift*100:+.3f}pp "
       f"({result.mean_lift/result.mean_control:+.2%} relative)")
 print(f"  95% credible interval:      [{result.credible_lower*100:+.3f}pp, "
@@ -84,7 +95,7 @@ print(f"  95% credible interval:      [{result.credible_lower*100:+.3f}pp, "
 
 print(f"""
 💡 PM-facing translation:
-   "There's a {result.p_treatment_better:.2%} probability that the
+   "There's a {fmt_p(result.p_treatment_better)} probability that the
    personalized homepage beats the existing homepage on conversion. Our
    best estimate of the lift is {result.mean_lift*100:+.2f}pp ({result.mean_lift/result.mean_control:+.1%}
    relative), and we're 95% confident the true lift is between
@@ -92,8 +103,8 @@ print(f"""
 """)
 
 print(
-    f"📌 Verdict (for the PM): We're essentially certain "
-    f"({result.p_treatment_better:.1%} confidence) the new homepage wins. "
+    f"📌 Verdict (for the PM): The posterior probability that the new homepage "
+    f"wins is {fmt_p(result.p_treatment_better)}. "
     f"Our best estimate of the lift is +{result.mean_lift*100:.1f}pp "
     f"({result.mean_lift/result.mean_control:+.0%} more paid subscribers), "
     f"and even the worst plausible case is +{result.credible_lower*100:.1f}pp -- "
@@ -126,16 +137,17 @@ print("""
 💡 Why this framing is superior for product decisions:
    - It's symmetric: 'cost of being wrong' on both sides
    - It's a single number a PM can compare to business value
-   - It supports continuous monitoring (no peeking penalty)
+   - It is easier to monitor during a test (though repeated looks with a
+     fixed threshold still raise the error rate, so set the rule up front)
    - It generalizes to multi-armed bandits naturally
 """)
 
 print(
     "📌 Verdict (for the PM): The downside of shipping is effectively zero -- "
     "if we're somehow wrong, we lose almost nothing. The downside of NOT "
-    f"shipping is about {result.expected_loss_not_ship*100:.1f}pp of "
-    "conversion we walk away from every week. The risk/reward is overwhelmingly "
-    "in favor of shipping."
+    f"shipping is about {result.expected_loss_not_ship*100:.1f}pp of trial-to-paid "
+    "conversion given up on every future cohort of trialists. The risk/reward is "
+    "overwhelmingly in favor of shipping."
 )
 
 
@@ -147,11 +159,11 @@ print(
 print("=" * 78)
 print("D. ROPE (Region Of Practical Equivalence) — ±0.5pp")
 print("=" * 78)
-print(f"  P(lift > +0.5pp)  = {result.p_above_rope:.4%}   "
+print(f"  P(lift > +0.5pp): {fmt_p(result.p_above_rope)}   "
       f"(meaningful improvement)")
-print(f"  P(|lift| ≤ 0.5pp) = {result.p_in_rope:.4%}   "
+print(f"  P(|lift| ≤ 0.5pp): {fmt_p(result.p_in_rope)}   "
       f"(practically equivalent)")
-print(f"  P(lift < -0.5pp)  = {result.p_below_rope:.4%}   "
+print(f"  P(lift < -0.5pp): {fmt_p(result.p_below_rope)}   "
       f"(meaningful regression)")
 
 print("""
@@ -195,7 +207,7 @@ for label, a, b in priors[:3]:
                  r.p_treatment_better))
     print(f"  {label:<25} lift={r.mean_lift*100:+.3f}pp  "
           f"CrI=[{r.credible_lower*100:+.2f}, {r.credible_upper*100:+.2f}]pp  "
-          f"P(T>C)={r.p_treatment_better:.4%}")
+          f"P(T>C): {fmt_p(r.p_treatment_better)}")
 
 print("""
 💡 Across uniform → weak → strong priors centered on baseline, the
@@ -244,7 +256,7 @@ ax.axvspan(result.credible_lower * 100, result.credible_upper * 100,
                  f"{result.credible_upper*100:+.2f}]pp")
 ax.set_xlabel("Lift (percentage points)")
 ax.set_ylabel("Posterior samples")
-ax.set_title(f"Posterior of the lift  |  P(T>C) = {result.p_treatment_better:.2%}")
+ax.set_title(f"Posterior of the lift  |  P(T>C): {fmt_p(result.p_treatment_better)}")
 ax.legend()
 ax.grid(axis="y", linestyle="--", alpha=0.4)
 
@@ -259,9 +271,9 @@ ax.axvline(0, color="gray", linewidth=1)
 
 # Annotate P(above), P(in), P(below)
 ax.text(0.02, 0.97,
-        f"P(lift > +0.5pp)  = {result.p_above_rope:.2%}\n"
-        f"P(|lift| <= 0.5pp) = {result.p_in_rope:.2%}\n"
-        f"P(lift < -0.5pp)  = {result.p_below_rope:.2%}",
+        f"P(lift > +0.5pp): {fmt_p(result.p_above_rope)}\n"
+        f"P(|lift| <= 0.5pp): {fmt_p(result.p_in_rope)}\n"
+        f"P(lift < -0.5pp): {fmt_p(result.p_below_rope)}",
         transform=ax.transAxes, va="top", fontsize=10,
         bbox=dict(boxstyle="round,pad=0.5", facecolor="white", alpha=0.85))
 ax.set_xlabel("Lift (percentage points)")
@@ -295,11 +307,11 @@ p_above_mde = float((result.samples_lift > 0.01).mean())
 print("\n" + "=" * 78)
 print("G. P(LIFT EXCEEDS THE 1pp SHIP THRESHOLD)")
 print("=" * 78)
-print(f"  P(lift > +1pp MDE) = {p_above_mde:.4%}")
+print(f"  P(lift > +1pp MDE): {fmt_p(p_above_mde)}")
 
 print(
-    f"\nVerdict (for the PM): We're {p_above_mde:.0%} confident the lift is "
-    "above the +1pp ship threshold we agreed on at kickoff. Translation: "
+    f"\nVerdict (for the PM): The posterior probability that the lift is above "
+    f"the +1pp ship threshold we agreed on at kickoff is {fmt_p(p_above_mde)}. Translation: "
     "the new homepage doesn't just beat the old one -- it beats it by "
     "more than enough to justify shipping. No caveats on the headline metric."
 )
@@ -315,8 +327,8 @@ print("BAYESIAN CONCLUSION")
 print("=" * 78)
 print(
     "Posterior summary (uninformative Beta(1,1) prior, 100k MC samples):\n"
-    f"  P(treatment > control):       {result.p_treatment_better:.4%}\n"
-    f"  P(lift > +1pp ship threshold): {p_above_mde:.4%}\n"
+    f"  P(treatment > control):       {fmt_p(result.p_treatment_better)}\n"
+    f"  P(lift > +1pp ship threshold): {fmt_p(p_above_mde)}\n"
     f"  Posterior mean lift:          {result.mean_lift*100:+.2f}pp "
     f"({result.mean_lift/result.mean_control:+.2%} relative)\n"
     f"  95% credible interval:        "

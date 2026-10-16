@@ -20,6 +20,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from src.data.loader import load_experiment
 from src.analysis.sanity_checks import check_srm
@@ -29,6 +31,8 @@ from src.analysis.sanity_checks import check_srm
 # 1. Load the data
 # ---------------------------------------------------------------------
 df = load_experiment("data/experiment.csv").dropna(subset=["group"])
+FIG_DIR = Path("reports/figures")
+FIG_DIR.mkdir(parents=True, exist_ok=True)
 print(f"Shape: {df.shape}")
 print(f"Columns: {list(df.columns)}\n")
 print(df.head())
@@ -42,6 +46,10 @@ print(df.head())
 srm = check_srm(df, group_col="group", expected_ratio={"control": 0.5, "treatment": 0.5})
 print("\n=== SRM check ===")
 print(srm)
+if srm.p_value < 0.01:
+    print("\n⚠️  Borderline: this passes the strict alpha = 0.001 alert threshold but "
+          "would fail at 0.01.\n   Treat it as a data-quality incident to localize, "
+          "not as a clean pass.")
 print("\n💡 Interpretation: If SRM fails, suspect a bug. Look for:")
 print("   - Asymmetric platform/device behavior (e.g., Android-only bug)")
 print("   - Bot or crawler traffic in one arm")
@@ -92,6 +100,7 @@ CATEGORICAL = ["country", "device", "source", "is_returning"]
 
 print("\n=== Covariate balance (categorical) ===")
 flagged_cols = []
+gaps = {}
 for col in CATEGORICAL:
     share = (
         df.groupby(["group", col]).size()
@@ -105,6 +114,22 @@ for col in CATEGORICAL:
     print(share.round(2).to_string())
     if share["flag"].any():
         flagged_cols.append(col)
+    gaps[col] = share["gap_pp"]
+
+fig, axes = plt.subplots(1, len(CATEGORICAL), figsize=(15, 3.4), sharex=True)
+for ax, col in zip(axes, CATEGORICAL):
+    g = gaps[col]
+    colors = ["#E8684A" if abs(v) > FLAG_THRESHOLD_PP else "#5B8FF9" for v in g.values]
+    ax.barh([str(i) for i in g.index], g.values, color=colors)
+    ax.axvline(0, color="gray", linewidth=1)
+    for x in (-FLAG_THRESHOLD_PP, FLAG_THRESHOLD_PP):
+        ax.axvline(x, color="#E8684A", linestyle="--", linewidth=1)
+    ax.set_title(col)
+    ax.set_xlabel("Treatment − control share (pp)")
+fig.suptitle("Covariate balance: share gap by category (dashed = ±1pp flag)", fontweight="bold")
+plt.tight_layout()
+plt.savefig(FIG_DIR / "01_categorical_balance.png", dpi=140, bbox_inches="tight")
+print(f"\nSaved -> {FIG_DIR}/01_categorical_balance.png")
 
 # Continuous covariate — Welch's t-test
 print("\n=== Covariate balance (continuous: prior_watch_hours) ===")
@@ -114,6 +139,19 @@ t_stat, p_val = stats.ttest_ind(c, t, equal_var=False)
 print(f"Control   mean: {c.mean():.4f}  std: {c.std():.4f}  n: {len(c):,}")
 print(f"Treatment mean: {t.mean():.4f}  std: {t.std():.4f}  n: {len(t):,}")
 print(f"Welch t-test:   t = {t_stat:+.3f}, p = {p_val:.4f}")
+
+fig, ax = plt.subplots(figsize=(8, 4))
+bins = np.linspace(0, np.percentile(df["prior_watch_hours"], 99), 60)
+ax.hist(c, bins=bins, density=True, alpha=0.5, color="#5B8FF9", label="Control")
+ax.hist(t, bins=bins, density=True, alpha=0.5, color="#F6BD16", label="Treatment")
+ax.set_yscale("log")
+ax.set_xlabel("Prior watch hours (30 days before trial)")
+ax.set_ylabel("Density (log scale)")
+ax.set_title(f"Continuous covariate balance (Welch p = {p_val:.2f})", fontweight="bold")
+ax.legend()
+plt.tight_layout()
+plt.savefig(FIG_DIR / "01_continuous_balance.png", dpi=140, bbox_inches="tight")
+print(f"Saved -> {FIG_DIR}/01_continuous_balance.png")
 
 
 # ---------------------------------------------------------------------

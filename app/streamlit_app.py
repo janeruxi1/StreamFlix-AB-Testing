@@ -39,7 +39,7 @@ st.set_page_config(
 
 st.title("🧪 A/B Test Toolkit")
 st.markdown(
-    "Interactive companion to the StreamFlix A/B testing portfolio project. "
+    "Interactive companion to the StreamFlix A/B testing project. "
     "Both modes use the same code as the notebooks and are covered by 55 "
     "unit tests."
 )
@@ -184,7 +184,7 @@ else:
               f"[{freq.ci_lower*100:+.2f}, {freq.ci_upper*100:+.2f}]pp")
     m3.metric("Frequentist p-value", f"{freq.p_value:.2g}")
     m4.metric("P(treatment > control)",
-              f"{bayes.p_treatment_better:.2%}")
+              ">99.99%" if bayes.p_treatment_better >= 0.9999 else f"{bayes.p_treatment_better:.2%}")
 
     if freq.significant and bayes.p_treatment_better > 0.95:
         st.success(
@@ -230,7 +230,7 @@ else:
               help="Conversion we'd leave on the table by not shipping.")
 
     st.markdown(
-        f"**Verdict:** P(treatment > control) = {bayes.p_treatment_better:.2%}. "
+        f"**Verdict:** P(treatment > control) {'>99.99%' if bayes.p_treatment_better >= 0.9999 else '= ' + format(bayes.p_treatment_better, '.2%')}. "
         f"95% credible interval [{bayes.credible_lower*100:+.2f}, "
         f"{bayes.credible_upper*100:+.2f}]pp. "
         f"Expected gain = {bayes.expected_loss_not_ship*100:.2f}pp; "
