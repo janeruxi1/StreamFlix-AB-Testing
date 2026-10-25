@@ -380,7 +380,7 @@ See section 7 ("Next steps") of the decision memo for the follow-up actions.
 | All charts | `reports/figures/` |
 | Reusable inference primitives | `src/analysis/` (frequentist, bayesian, power, sanity_checks, segmentation) |
 | Data loader + simulator | `src/data/` |
-| Tests | `tests/` — 62 pytest, GitHub Actions CI |
+| Tests | `tests/` — 65 pytest (incl. app smoke tests), GitHub Actions CI |
 
 ---
 

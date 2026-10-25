@@ -39,8 +39,7 @@ BASELINE_RATE = 0.18    # current trial-to-paid rate
 MDE_ABSOLUTE  = 0.01    # PM wants to detect at least +1pp lift
 ALPHA         = 0.05
 POWER         = 0.80
-DAILY_TRIAFFIC = 3_500  # avg new trialists per day (typo on purpose? no - corrected below)
-DAILY_TRAFFIC = 3_500
+DAILY_TRAFFIC = 3_500   # avg new trialists per day
 
 
 # ---------------------------------------------------------------------

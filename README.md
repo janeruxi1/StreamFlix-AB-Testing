@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/janeruxi1/StreamFlix-AB-Testing/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![Tests](https://img.shields.io/badge/tests-62%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-65%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 > **End-to-end A/B test analysis** for a streaming subscription product, built on a synthetic dataset patterned after real product-experiment dynamics. Demonstrates the full experimentation workflow: experiment design, data quality, frequentist & Bayesian analysis, heterogeneous treatment effects, variance reduction (CUPED), sensitivity/robustness testing, and stakeholder communication.
@@ -110,7 +110,7 @@ StreamFlix-AB-Testing/
 │       ├── frequentist.py           # z-test, Welch's, Holm-Bonferroni
 │       ├── bayesian.py              # Beta-Binomial posterior
 │       └── segmentation.py          # Segment lifts & CUPED
-├── tests/                           # 62 pytest unit tests
+├── tests/                           # 65 pytest tests (incl. app smoke tests)
 │   ├── conftest.py
 │   ├── test_power.py
 │   ├── test_frequentist.py
@@ -137,7 +137,7 @@ StreamFlix-AB-Testing/
 pip install -r requirements.txt
 python src/data/simulate.py            # generate the dataset
 python notebooks/01_data_quality.py    # run the analysis scripts in order (01 ... 08)
-pytest tests/                          # run the 62 unit tests
+pytest tests/                          # run the 65 tests
 ```
 
 Each notebook is generated from the matching `.py` script and executed end to end, so both show the same code and results.
@@ -152,7 +152,7 @@ Visitors can interact with the math without cloning the repo:
 streamlit run app/streamlit_app.py
 ```
 
-Two modes: **pre-experiment design** (slider-driven sample-size calculator with a sample-size-vs-MDE chart) and **post-experiment analysis** (paste in conversion counts, get frequentist + Bayesian results plus posterior chart). See [`app/README.md`](./app/README.md) for deployment to Streamlit Community Cloud.
+Three tabs: **the StreamFlix result** (the decision, the sample-ratio and guardrail checks, and the lift by segment, recomputed from the data), **plan a test** (sample size, runtime and detectable effect) and **analyse your own results** (frequentist and Bayesian readout on any counts, pre-filled with this experiment). See [`app/README.md`](./app/README.md) for deployment to Streamlit Community Cloud.
 
 The app imports directly from `src/analysis/`, so the math is the same as the notebooks and protected by the same unit tests.
 
@@ -162,7 +162,7 @@ The app imports directly from `src/analysis/`, so the math is the same as the no
 
 ## 🧪 Testing & CI
 
-The `src/` modules are covered by **62 pytest unit tests** that run on every push via GitHub Actions across Python 3.10, 3.11, and 3.12. Coverage spans:
+The `src/` modules and the app are covered by **65 pytest tests** that run on every push via GitHub Actions across Python 3.10, 3.11, and 3.12. Coverage spans:
 
 - Power & sample-size math (textbook value, 1/MDE² scaling, unequal-arm formula)
 - Frequentist tests (z-test, Welch's t, Holm-Bonferroni step-down)
