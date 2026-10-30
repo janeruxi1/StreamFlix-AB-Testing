@@ -31,3 +31,6 @@ Thumbs.db
 .streamlit/secrets.toml
 # Private notes (not pushed to GitHub)
 reports/prep/
+
+# Raw downloads (Hillstrom has no stated licence; Upworthy is committed separately, in data/upworthy/)
+data/raw/
