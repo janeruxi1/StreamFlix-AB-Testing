@@ -100,3 +100,17 @@ readout.
    confirmed, against the best single choice on that half. This was fixed in code before the
    data arrived (notebook 03 first ran on a synthetic stand-in) and is recorded here so the plan
    says it too.
+
+## 2026-10-31 · Two sections added that do not change the readout
+
+The repository now tells one experiment from plan to rollout, with this test as the spine.
+Two sections are added; neither changes a metric, comparison or the decision rule above.
+
+1. **Design (notebook 01).** What this test could detect: the minimum detectable effect for
+   visit, conversion and spend at about 21,000 customers per arm (two-sided alpha 0.05, 80%
+   power), and the sample size a planner would have needed for effects a retailer would care
+   about. Baseline rates and spreads come from the no-e-mail arm, so this is a design review
+   after the fact, not a pre-test calculation, and it is labelled that way.
+2. **Rollout and follow-up (notebook 02).** How the decision would be rolled out: a small
+   permanent no-e-mail holdback to keep measuring the e-mail's value, the guardrails to watch,
+   and the next test, sized with the same calculation.

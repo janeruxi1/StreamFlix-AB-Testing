@@ -78,3 +78,15 @@ numbers and says whether the holdout agrees in sign and rough size.
 
 Nothing in the confirmatory outcomes. If the confirmatory file's columns differ from the
 exploratory one, that is fixed and noted here before any result is computed.
+
+## 2026-10-31 · Q5 dropped, before the confirmatory sample was analysed
+
+Recorded before any confirmatory or holdout result was computed (the confirmatory file had not
+been opened by the analysis code at this point).
+
+- **Q5 is dropped.** On the exploratory sample, its own pre-planned check failed: the simulation
+  overstated the measured gain from picking winners by about 25%, so its answers would rest on
+  a correction factor rather than on the data. Q1–Q4 answer the programme's questions directly
+  from the experiments and are kept unchanged.
+- **The holdout rerun of Q1–Q4 is unchanged** and is reported in the same notebook as Q2–Q4
+  (notebook 05), so the analysis sample's definition no longer mentions Q5.
