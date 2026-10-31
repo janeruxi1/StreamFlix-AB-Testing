@@ -1,7 +1,6 @@
 """Tests for src/analysis/frequentist.py."""
 import math
 
-import pytest
 
 from src.analysis.frequentist import (
     two_proportion_test,

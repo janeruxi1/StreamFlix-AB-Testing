@@ -5,6 +5,7 @@ scipy>=1.11,<2
 
 # Statistics
 statsmodels>=0.14,<1
+pyarrow>=14,<30
 
 # Visualization
 matplotlib>=3.7,<4
@@ -13,6 +14,8 @@ plotly>=5.17,<7
 
 # Notebook / app
 jupyterlab>=4.0,<5
+nbclient>=0.9,<1
+nbformat>=5.9,<6
 streamlit>=1.50,<2
 
 # Testing

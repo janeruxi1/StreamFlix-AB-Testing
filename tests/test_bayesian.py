@@ -1,8 +1,6 @@
 """Tests for src/analysis/bayesian.py."""
 import math
 
-import numpy as np
-import pytest
 
 from src.analysis.bayesian import bayesian_ab_binary
 

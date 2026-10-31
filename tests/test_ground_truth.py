@@ -1,5 +1,4 @@
 """The analysis pipeline should recover the effects the simulator planted."""
-import numpy as np
 import pytest
 
 from src.analysis.frequentist import two_proportion_test

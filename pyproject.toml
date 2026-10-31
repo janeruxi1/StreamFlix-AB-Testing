@@ -1,0 +1,17 @@
+[project]
+name = "ab-testing-real-experiments"
+version = "0.2.0"
+description = "Reading out real randomized experiments: the Hillstrom e-mail test and the Upworthy headline-testing programme"
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["notebooks/streamflix"]   # the archived simulated-data case study is kept as it was written
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+
+[tool.ruff.lint.per-file-ignores]
+"notebooks/*.py" = ["E402"]
+"notebooks/*.ipynb" = ["E402"]
+"app/*.py" = ["E402"]

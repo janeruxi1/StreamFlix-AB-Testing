@@ -2,8 +2,6 @@
 import math
 
 import numpy as np
-import pandas as pd
-import pytest
 
 from src.analysis.segmentation import (
     segment_lifts,

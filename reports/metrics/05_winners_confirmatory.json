@@ -1,0 +1,102 @@
+{
+  "source": "real",
+  "sample": "confirmatory",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "tests": 17703,
+  "packages": 85109,
+  "tau": 0.25833406,
+  "tau_split_range": [
+    0.25765419,
+    0.25936758
+  ],
+  "tau_ci_tests": [
+    0.25408451,
+    0.26182916
+  ],
+  "raw_sd": 0.29167251,
+  "winners": {
+    "tests": 17703.0,
+    "lift_a_mean": 0.45983273,
+    "lift_b_mean": 0.2161757,
+    "survival": 0.47012247,
+    "shrunk_lift_mean": 0.25199692,
+    "same_winner_rate": 0.42545614,
+    "chance_same_winner": 0.22254686,
+    "gain_vs_random_b_mean": 0.18422778
+  },
+  "winners_split_range": {
+    "tests": [
+      17703.0,
+      17703.0
+    ],
+    "lift_a_mean": [
+      0.45814435,
+      0.46152661
+    ],
+    "lift_b_mean": [
+      0.21328526,
+      0.21930848
+    ],
+    "survival": [
+      0.46324296,
+      0.47731124
+    ],
+    "shrunk_lift_mean": [
+      0.25104516,
+      0.252848
+    ],
+    "same_winner_rate": [
+      0.41812122,
+      0.43009659
+    ],
+    "chance_same_winner": [
+      0.22254686,
+      0.22254686
+    ],
+    "gain_vs_random_b_mean": [
+      0.18192538,
+      0.18675337
+    ]
+  },
+  "gain_vs_random_relative": 0.20228964,
+  "holdout": {
+    "sample": "holdout",
+    "tests": 4871,
+    "flag_rate_inside": 0.67988669,
+    "flag_rate_outside": 0.00236097,
+    "tau": 0.26109147,
+    "winners": {
+      "tests": 3792.0,
+      "lift_a_mean": 0.46417326,
+      "lift_b_mean": 0.21527105,
+      "survival": 0.46379868,
+      "shrunk_lift_mean": 0.25369129,
+      "same_winner_rate": 0.41745781,
+      "chance_same_winner": 0.2229842,
+      "gain_vs_random_b_mean": 0.18424993
+    },
+    "gain_vs_random_relative": 0.20231628
+  },
+  "holdout_agrees": true
+}

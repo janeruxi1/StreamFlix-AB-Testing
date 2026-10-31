@@ -1,0 +1,88 @@
+{
+  "source": "real",
+  "seed": 20261030,
+  "segments": [
+    "purchase_line",
+    "newbie",
+    "channel",
+    "zip_code",
+    "history_segment"
+  ],
+  "candidates": {
+    "purchase_line": {
+      "both": "mens",
+      "mens only": "mens",
+      "womens only": "mens"
+    },
+    "newbie": {
+      "0": "mens",
+      "1": "mens"
+    },
+    "channel": {
+      "Multichannel": "womens",
+      "Phone": "mens",
+      "Web": "mens"
+    },
+    "zip_code": {
+      "Rural": "mens",
+      "Surburban": "mens",
+      "Urban": "mens"
+    },
+    "history_segment": {
+      "1) $0 - $100": "womens",
+      "2) $100 - $200": "mens",
+      "3) $200 - $350": "mens",
+      "4) $350 - $500": "mens",
+      "5) $500 - $750": "mens",
+      "6) $750 - $1,000": "mens",
+      "7) $1,000 +": "womens"
+    }
+  },
+  "discovery_values": {
+    "history_segment": 1.69475296,
+    "channel": 1.65838995,
+    "purchase_line": 1.59569737,
+    "newbie": 1.59569737,
+    "zip_code": 1.59569737
+  },
+  "single_values_discovery": {
+    "none": 0.77023188,
+    "mens": 1.59569737,
+    "womens": 1.22207225
+  },
+  "best_single": "mens",
+  "chosen": "history_segment",
+  "confirmation": {
+    "gain": -0.0095547,
+    "ci": [
+      -0.28046255,
+      0.26437914
+    ],
+    "n": 32001,
+    "targeted": 1.2364798,
+    "single": 1.2460345
+  },
+  "recommend_targeting": false,
+  "shrinkage": {
+    "purchase_line": {
+      "discovery gain over single": 0.0,
+      "confirmation gain over single": 0.0
+    },
+    "newbie": {
+      "discovery gain over single": 0.0,
+      "confirmation gain over single": 0.0
+    },
+    "channel": {
+      "discovery gain over single": 0.06269258,
+      "confirmation gain over single": -0.07482047
+    },
+    "zip_code": {
+      "discovery gain over single": 0.0,
+      "confirmation gain over single": 0.0
+    },
+    "history_segment": {
+      "discovery gain over single": 0.0990556,
+      "confirmation gain over single": -0.0095547
+    }
+  }
+}

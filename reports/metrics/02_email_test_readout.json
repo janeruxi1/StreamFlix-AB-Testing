@@ -1,0 +1,344 @@
+{
+  "source": "real",
+  "cap": 499.0,
+  "covariates": [
+    "history",
+    "recency",
+    "mens",
+    "womens",
+    "newbie",
+    "zip_code",
+    "channel"
+  ],
+  "margin_assumed": 0.4,
+  "cost_per_email_assumed": 0.1,
+  "effects": {
+    "spend_capped": [
+      {
+        "metric": "spend_capped",
+        "comparison": "mens vs none",
+        "mean_treatment": 1.42261651,
+        "mean_control": 0.65278936,
+        "diff": 0.76689139,
+        "ci_low": 0.48256588,
+        "ci_high": 1.05121691,
+        "rel": 1.17479151,
+        "se": 0.1450667,
+        "p_value": 1.2e-07,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.76982716,
+        "unadjusted_ci": [
+          0.48514913,
+          1.05450518
+        ],
+        "ci_narrower_by": 0.00123829
+      },
+      {
+        "metric": "spend_capped",
+        "comparison": "womens vs none",
+        "mean_treatment": 1.07720157,
+        "mean_control": 0.65278936,
+        "diff": 0.42465917,
+        "ci_low": 0.16942552,
+        "ci_high": 0.67989282,
+        "rel": 0.65053017,
+        "se": 0.13022364,
+        "p_value": 0.0011102,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.42441222,
+        "unadjusted_ci": [
+          0.16896451,
+          0.67985992
+        ],
+        "ci_narrower_by": 0.00083798
+      },
+      {
+        "metric": "spend_capped",
+        "comparison": "mens vs womens",
+        "mean_treatment": 1.42261651,
+        "mean_control": 1.07720157,
+        "diff": 0.33966843,
+        "ci_low": 0.02736853,
+        "ci_high": 0.65196833,
+        "rel": 0.31532485,
+        "se": 0.15933961,
+        "p_value": 0.03302936,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.34541494,
+        "unadjusted_ci": [
+          0.03257056,
+          0.65825932
+        ],
+        "ci_narrower_by": 0.00174044
+      }
+    ],
+    "spend": [
+      {
+        "metric": "spend",
+        "comparison": "mens vs none",
+        "mean_treatment": 1.42261651,
+        "mean_control": 0.65278936,
+        "diff": 0.76689139,
+        "ci_low": 0.48256588,
+        "ci_high": 1.05121691,
+        "rel": 1.17479151,
+        "se": 0.1450667,
+        "p_value": 1.2e-07,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.76982716,
+        "unadjusted_ci": [
+          0.48514913,
+          1.05450518
+        ],
+        "ci_narrower_by": 0.00123829
+      },
+      {
+        "metric": "spend",
+        "comparison": "womens vs none",
+        "mean_treatment": 1.07720157,
+        "mean_control": 0.65278936,
+        "diff": 0.42465917,
+        "ci_low": 0.16942552,
+        "ci_high": 0.67989282,
+        "rel": 0.65053017,
+        "se": 0.13022364,
+        "p_value": 0.0011102,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.42441222,
+        "unadjusted_ci": [
+          0.16896451,
+          0.67985992
+        ],
+        "ci_narrower_by": 0.00083798
+      },
+      {
+        "metric": "spend",
+        "comparison": "mens vs womens",
+        "mean_treatment": 1.42261651,
+        "mean_control": 1.07720157,
+        "diff": 0.33966843,
+        "ci_low": 0.02736853,
+        "ci_high": 0.65196833,
+        "rel": 0.31532485,
+        "se": 0.15933961,
+        "p_value": 0.03302936,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.34541494,
+        "unadjusted_ci": [
+          0.03257056,
+          0.65825932
+        ],
+        "ci_narrower_by": 0.00174044
+      }
+    ],
+    "conversion": [
+      {
+        "metric": "conversion",
+        "comparison": "mens vs none",
+        "mean_treatment": 0.01253109,
+        "mean_control": 0.00572609,
+        "diff": 0.00677355,
+        "ci_low": 0.00497124,
+        "ci_high": 0.00857586,
+        "rel": 1.18292897,
+        "se": 0.00091956,
+        "p_value": 0.0,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.00680501,
+        "unadjusted_ci": [
+          0.00500013,
+          0.00860988
+        ],
+        "ci_narrower_by": 0.00142298
+      },
+      {
+        "metric": "conversion",
+        "comparison": "womens vs none",
+        "mean_treatment": 0.00883714,
+        "mean_control": 0.00572609,
+        "diff": 0.00311243,
+        "ci_low": 0.00150174,
+        "ci_high": 0.00472312,
+        "rel": 0.54355284,
+        "se": 0.00082179,
+        "p_value": 0.00015226,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.00311106,
+        "unadjusted_ci": [
+          0.00149864,
+          0.00472347
+        ],
+        "ci_narrower_by": 0.00107369
+      },
+      {
+        "metric": "conversion",
+        "comparison": "mens vs womens",
+        "mean_treatment": 0.01253109,
+        "mean_control": 0.00883714,
+        "diff": 0.00364022,
+        "ci_low": 0.00169206,
+        "ci_high": 0.00558837,
+        "rel": 0.41192237,
+        "se": 0.00099398,
+        "p_value": 0.00024998,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.00369395,
+        "unadjusted_ci": [
+          0.00174347,
+          0.00564443
+        ],
+        "ci_narrower_by": 0.00119221
+      }
+    ],
+    "visit": [
+      {
+        "metric": "visit",
+        "comparison": "mens vs none",
+        "mean_treatment": 0.18275684,
+        "mean_control": 0.10616728,
+        "diff": 0.07605955,
+        "ci_low": 0.06952167,
+        "ci_high": 0.08259743,
+        "rel": 0.71641235,
+        "se": 0.00333571,
+        "p_value": 0.0,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.07658956,
+        "unadjusted_ci": [
+          0.06995335,
+          0.08322578
+        ],
+        "ci_narrower_by": 0.01481852
+      },
+      {
+        "metric": "visit",
+        "comparison": "womens vs none",
+        "mean_treatment": 0.15140038,
+        "mean_control": 0.10616728,
+        "diff": 0.04540963,
+        "ci_low": 0.03916116,
+        "ci_high": 0.05165811,
+        "rel": 0.42771779,
+        "se": 0.00318806,
+        "p_value": 0.0,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.04523311,
+        "unadjusted_ci": [
+          0.03889368,
+          0.05157254
+        ],
+        "ci_narrower_by": 0.01434691
+      },
+      {
+        "metric": "visit",
+        "comparison": "mens vs womens",
+        "mean_treatment": 0.18275684,
+        "mean_control": 0.15140038,
+        "diff": 0.03049174,
+        "ci_low": 0.02352156,
+        "ci_high": 0.03746192,
+        "rel": 0.20139802,
+        "se": 0.00355628,
+        "p_value": 0.0,
+        "adjusted": true,
+        "holm_pass": true,
+        "unadjusted_diff": 0.03135646,
+        "unadjusted_ci": [
+          0.02428491,
+          0.03842801
+        ],
+        "ci_narrower_by": 0.01433475
+      }
+    ]
+  },
+  "value": {
+    "mens": {
+      "lift": 0.76689139,
+      "ci": [
+        0.48256588,
+        1.05121691
+      ],
+      "holm_pass": true,
+      "value_per_1000": 206.7565575,
+      "value_per_1000_ci": [
+        93.02635188,
+        320.48676312
+      ],
+      "breakeven_margin": 0.13039656,
+      "passes": true
+    },
+    "womens": {
+      "lift": 0.42465917,
+      "ci": [
+        0.16942552,
+        0.67989282
+      ],
+      "holm_pass": true,
+      "value_per_1000": 69.86366728,
+      "value_per_1000_ci": [
+        -32.22979234,
+        171.95712691
+      ],
+      "breakeven_margin": 0.23548296,
+      "passes": true
+    }
+  },
+  "head_to_head": {
+    "diff": 0.33966843,
+    "ci": [
+      0.02736853,
+      0.65196833
+    ],
+    "holm_pass": true
+  },
+  "decision": "mens",
+  "rollout": {
+    "holdback": [
+      {
+        "holdback_share": 0.02,
+        "customers_held_back": 1280,
+        "mde_one_send": 0.91664629,
+        "sends_to_detect_half_the_lift": 6,
+        "margin_given_up_per_send": 392.6483936
+      },
+      {
+        "holdback_share": 0.05,
+        "customers_held_back": 3200,
+        "mde_one_send": 0.58882063,
+        "sends_to_detect_half_the_lift": 3,
+        "margin_given_up_per_send": 981.620984
+      },
+      {
+        "holdback_share": 0.1,
+        "customers_held_back": 6400,
+        "mde_one_send": 0.42776827,
+        "sends_to_detect_half_the_lift": 2,
+        "margin_given_up_per_send": 1963.24196801
+      },
+      {
+        "holdback_share": 0.2,
+        "customers_held_back": 12800,
+        "mde_one_send": 0.3208262,
+        "sends_to_detect_half_the_lift": 1,
+        "margin_given_up_per_send": 3926.48393601
+      }
+    ],
+    "next_test": {
+      "effect_to_detect": 0.25,
+      "n_per_arm": 79170,
+      "n_per_arm_for_head_to_head_seen_here": 42888,
+      "sends_needed": 2.4740625
+    }
+  }
+}

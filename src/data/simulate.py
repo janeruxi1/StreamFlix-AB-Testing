@@ -244,7 +244,7 @@ def main(out_path: str | Path = "data/experiment.csv") -> None:
     # Print a quick summary
     print(f"✅ Wrote {len(df):,} rows to {out}")
     print(f"\nGroup counts:\n{df['group'].value_counts()}")
-    print(f"\nObserved conversion by group:")
+    print("\nObserved conversion by group:")
     print(df.groupby("group")["converted"].agg(["mean", "count"]))
     truth = compute_ground_truth(cfg)
     print(f"\nTrue ATE implied by the simulator: {truth['ate'] * 100:+.2f}pp")

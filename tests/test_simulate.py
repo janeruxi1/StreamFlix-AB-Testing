@@ -1,5 +1,4 @@
 """Tests for src/data/simulate.py."""
-import pytest
 
 from src.data.simulate import SimConfig, simulate_experiment
 

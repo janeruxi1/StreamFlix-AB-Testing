@@ -1,0 +1,76 @@
+{
+  "source": "real",
+  "n": 64000,
+  "design": [
+    {
+      "metric": "visit",
+      "baseline": 0.10616728,
+      "sd": 0.30805883,
+      "mde_at_this_size": 0.00836183,
+      "effect_worth_detecting": 0.01,
+      "n_per_arm_needed": 14898
+    },
+    {
+      "metric": "conversion",
+      "baseline": 0.00572609,
+      "sd": 0.07545572,
+      "mde_at_this_size": 0.00204814,
+      "effect_worth_detecting": 0.002,
+      "n_per_arm_needed": 22345
+    },
+    {
+      "metric": "spend",
+      "baseline": 0.65278936,
+      "sd": 11.58819968,
+      "mde_at_this_size": 0.31454577,
+      "effect_worth_detecting": 0.25,
+      "n_per_arm_needed": 33728
+    }
+  ],
+  "srm": {
+    "counts": {
+      "none": 21306,
+      "mens": 21307,
+      "womens": 21387
+    },
+    "chi2": 0.20253125,
+    "p_value": 0.90369296,
+    "passed": true
+  },
+  "balance_max_abs_smd": {
+    "channel_Phone": 0.016899,
+    "history_segment_2) $100 - $200": 0.016382,
+    "channel_Web": 0.016163,
+    "history_segment_7) $1,000 +": 0.015915,
+    "history_segment_6) $750 - $1,000": 0.014873,
+    "zip_code_Rural": 0.013672,
+    "history_segment_4) $350 - $500": 0.012948,
+    "zip_code_Surburban": 0.011741,
+    "history_segment_1) $0 - $100": 0.0116,
+    "history_segment_3) $200 - $350": 0.011351,
+    "history_segment_5) $500 - $750": 0.010365,
+    "mens": 0.008631,
+    "history": 0.007625,
+    "womens": 0.007589,
+    "recency": 0.006827,
+    "channel_Multichannel": 0.005286,
+    "zip_code_Urban": 0.003735,
+    "newbie": 0.003449
+  },
+  "balance_above_0_05": 0,
+  "data_checks": {
+    "missing values": 0,
+    "negative spend": 0,
+    "spend without a purchase": 0,
+    "purchase without spend": 0,
+    "purchase without a visit": 0
+  },
+  "spend_profile": {
+    "buyers": 578,
+    "share_buying": 0.00903125,
+    "spend_per_buyer_median": 80.795,
+    "spend_per_buyer_max": 499.0,
+    "cap_p99_positive": 499.0,
+    "buyers_above_cap": 0
+  }
+}
