@@ -88,3 +88,15 @@ nothing, and should the choice differ by customer?**
 
 Nothing in the outcomes. A trust-check failure would be investigated and reported before any
 readout.
+
+## 2026-10-31 · Two notes added after the data arrived
+
+1. **Correction to the opening note.** It said the widely quoted result was that the women's
+   e-mail did better. That was wrong: the men's e-mail lifts visits, purchases and spend more.
+   Nothing in the plan depended on it; it is corrected here rather than edited, as the plan's
+   own rule requires.
+2. **How "the targeting policy" is chosen.** The segment search builds one candidate policy per
+   segment variable. The candidate with the highest value on the discovery half is the one
+   confirmed, against the best single choice on that half. This was fixed in code before the
+   data arrived (notebook 03 first ran on a synthetic stand-in) and is recorded here so the plan
+   says it too.
